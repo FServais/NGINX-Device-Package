@@ -28,19 +28,22 @@
             <!-- >>>>> Cluster and Device configuration part <<<<< -->
             <vnsClusterCfg name="Cluster">
                 <vnsDevCfg name="Device">
-                    <vnsMParam key="Test"
-                       dispLabel="Test"
-                       description="Test"
-                       dType="str"/>
+
                 </vnsDevCfg>
             </vnsClusterCfg>
 
 
 
-
-
             <!-- >>>>> Functional part <<<<< -->
+            <vnsMFunc name="Load_balancer">
+                <vnsMConn name="internal" encType="vlan">
+                    <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-internal"/>
+                </vnsMConn>
 
+                <vnsMConn name="external" encType="vlan">
+                    <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-external"/>
+                </vnsMConn>
+            </vnsMFunc>
 
 
 
