@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<polUni>
+    <infraInfra>
+        <vnsMDev vendor="NGINX" model="NGINX" version="0.0.1">
+
+            <!-- >>>>> Generic part <<<<< -->
+
+            <!-- Script -->
+            <!-- TODO: complete versionExpr -->
+            <vnsDevScript name="NGINX"
+                          ctrlrVersion="1.0"
+                          minorversion="1"
+                          versionExpr="0.0.0"
+                          packageName="DeviceScript.py"/>
+
+            <!-- Credentials -->
+            <vnsMCred name="username" key="username"/>
+            <vnsMCredSecret name="password" key="password"/>
+
+            <!-- Interfaces -->
+            <vnsMIfLbl name="external" shortName="ext"/>
+            <vnsMIfLbl name="internal" shortName="int"/>
+            <vnsMIfLbl name="management" shortName="mgmt"/>
+
+
+
+            <!-- >>>>> Cluster and Device configuration part <<<<< -->
+            <vnsClusterCfg name="Cluster">
+                <vnsDevCfg name="Device">
+                    <vnsMParam key="Test"
+                       dispLabel="Test"
+                       description="Test"
+                       dType="str"/>
+                </vnsDevCfg>
+            </vnsClusterCfg>
+
+
+
+
+
+            <!-- >>>>> Functional part <<<<< -->
+
+
+
+
+
+        </vnsMDev>
+    </infraInfra>
+</polUni>
