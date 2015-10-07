@@ -4,7 +4,9 @@
     <infraInfra>
         <vnsMDev vendor="NGINX" model="NGINX" version="0.0.1">
 
-            <!-- >>>>> Generic part <<<<< -->
+            <!-- - - - - - - - - - - - - - - - - - - - - -->
+            <!-- GENERIC PART -->
+            <!-- - - - - - - - - - - - - - - - - - - - - -->
 
             <!-- Script -->
             <!-- TODO: complete versionExpr -->
@@ -24,8 +26,10 @@
             <vnsMIfLbl name="management" shortName="mgmt"/>
 
 
+            <!-- - - - - - - - - - - - - - - - - - - - - -->
+            <!-- CLUSTER AND DEVICE CONFIGURATION PART -->
+            <!-- - - - - - - - - - - - - - - - - - - - - -->
 
-            <!-- >>>>> Cluster and Device configuration part <<<<< -->
             <vnsClusterCfg name="Cluster">
                 <vnsDevCfg name="Device">
 
@@ -33,9 +37,26 @@
             </vnsClusterCfg>
 
 
+            <!-- - - - - - - - - - - - - - - - - - - - - -->
+            <!-- FUNCTIONAL PART -->
+            <!-- - - - - - - - - - - - - - - - - - - - - -->
 
-            <!-- >>>>> Functional part <<<<< -->
+            <!-- Global functional device configuration -->
+            <vnsMDevCfg>
+
+            </vnsMDevCfg>
+
+            <!-- Group configuration -->
+            <vnsGrpCfg>
+
+            </vnsGrpCfg>
+
+            <!-- Function configuration : Load balancer -->
             <vnsMFunc name="Load_balancer">
+                <!-- Image -->
+                <vnsMImage name="cisco.gif"/>
+
+                <!-- Connector Objects -->
                 <vnsMConn name="internal" encType="vlan">
                     <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-internal"/>
                 </vnsMConn>
@@ -43,6 +64,9 @@
                 <vnsMConn name="external" encType="vlan">
                     <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-external"/>
                 </vnsMConn>
+
+
+
             </vnsMFunc>
 
 
