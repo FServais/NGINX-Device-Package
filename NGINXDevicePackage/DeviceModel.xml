@@ -5,7 +5,7 @@
         <vnsMDev vendor="NGINX" model="NGINX" version="0.0.1">
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
-            <!-- GENERIC PART -->
+            <!--              GENERIC PART               -->
             <!-- - - - - - - - - - - - - - - - - - - - - -->
 
             <!-- Script -->
@@ -13,7 +13,7 @@
             <vnsDevScript name="NGINX"
                           ctrlrVersion="1.0"
                           minorversion="1"
-                          versionExpr="0.0.0"
+                          versionExpr="0.0.1"
                           packageName="DeviceScript.py"/>
 
             <!-- Credentials -->
@@ -26,8 +26,17 @@
             <vnsMIfLbl name="management" shortName="mgmt"/>
 
 
+            <!-- Parameter validation -->
+
+            <!-- TODO : Test regex more in depth! -->
+            <!-- From 1.0.0.1 to 223.255.255.254, exception 127.x.x.x -->
+            <vnsComparison name="isIPv4Addr" cmp="match" value="^(?!127)(?!1\.0\.0\.0)(?!223\.255\.255\.255)(2[0-2][0-3]|[1]?[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$"/>
+            <!--<vnsComparison name="ipv4Addr" cmp="match" value="^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])(\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])){3}$"/>-->
+
+
+
             <!-- - - - - - - - - - - - - - - - - - - - - -->
-            <!-- CLUSTER AND DEVICE CONFIGURATION PART -->
+            <!--  CLUSTER AND DEVICE CONFIGURATION PART  -->
             <!-- - - - - - - - - - - - - - - - - - - - - -->
 
             <vnsClusterCfg name="Cluster">
@@ -37,34 +46,101 @@
             </vnsClusterCfg>
 
 
+
             <!-- - - - - - - - - - - - - - - - - - - - - -->
-            <!-- FUNCTIONAL PART -->
+            <!--             FUNCTIONAL PART             -->
             <!-- - - - - - - - - - - - - - - - - - - - - -->
 
             <!-- Global functional device configuration -->
-            <vnsMDevCfg>
+            <vnsMDevCfg name="DeviceConfig">
+
+                <!-- Server pool -->
+                <vnsMFolder key="serverpool"
+                            description="Configure Server Pool"
+                            dispLabel="Configure Server Pool"
+                            dispFeature="Server">
+                            <!--scopedBy="epg"-->
+                            <!--cardinality="n"-->
+
+                    <vnsMParam key="serverpoolname" description="Name of the Server Pool" mandatory="true" dType="str" dispLabel="Name of the Server Pool"/>
+
+                    <vnsMFolder key="server"
+                                description="Server of a Server Pool"
+                                dispLabel="Server"
+                                cardinality="n"
+                                dispFeature="LB">
+                                <!--scopedBy="epg"-->
+                        <vnsMParam key="name" description="Server name" mandatory="true" dType="str" dispLabel="Name of the Server"/>
+                        <vnsMParam key="ip" description="IP address of the server" mandatory="true" dType="str" dispLabel="IP address of the server" validation="isIPv4Addr"/>
+                        <vnsMParam key="port" description="Port of the server" mandatory="false" dType="str" dispLabel="Port of the server"/>
+
+
+                    </vnsMFolder>
+                </vnsMFolder>
+
+                <!-- Server Load Balancer -->
+                <vnsMFolder key="lbserver"
+                            description="Configure the Server Load Balancer"
+                            dispLabel="Configure the Server Load Balancer"
+                            cardinality="n">
+                            <!--scopedBy="epg"-->
+                    <vnsMParam key="name" description="Name" mandatory="true" dType="str" dispLabel="Name"/>
+                    <vnsMParam key="ip" description="IP address" mandatory="true" dType="str" dispLabel="IP address" validation="isIPv4Addr"/>
+                    <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
+
+                </vnsMFolder>
+
 
             </vnsMDevCfg>
 
             <!-- Group configuration -->
-            <vnsGrpCfg>
+            <!--<vnsGrpCfg>-->
 
-            </vnsGrpCfg>
+            <!--</vnsGrpCfg>-->
+
+
 
             <!-- Function configuration : Load balancer -->
             <vnsMFunc name="Load_balancer">
+
                 <!-- Image -->
                 <vnsMImage name="cisco.gif"/>
 
                 <!-- Connector Objects -->
-                <vnsMConn name="internal" encType="vlan">
+                <vnsMConn name="internal" encType="vlan" dir="output">
                     <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-internal"/>
                 </vnsMConn>
 
-                <vnsMConn name="external" encType="vlan">
+                <vnsMConn name="external" encType="vlan" dir="input">
                     <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-external"/>
                 </vnsMConn>
 
+                <!-- Features -->
+                <vnsMFeature name="Server" dispOrder="0"/>
+                <vnsMFeature name="LB" dispOrder="1"/>
+
+                <!-- Folders -->
+                <vnsMFolder key="serverpoolCfg"
+                            description="Server Pool"
+                            dispLabel="Server Pool"
+                            dispFeature="Server"
+                            cardinality="n">
+                    <vnsMRel dispLabel="Select Server Pool" key="serverpoolRel">
+                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-serverpool"/>
+                    </vnsMRel>
+                </vnsMFolder>
+
+                <vnsMFolder key="lbserverCfg"
+                            description="Server Load Balancer"
+                            dispLabel="Server Load Balancer"
+                            dispFeature="LB">
+                    <vnsMRel dispLabel="Select Server Load Balancer" key="lbserverRel">
+                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-lbserver"/>
+                    </vnsMRel>
+                </vnsMFolder>
+
+
+                <!-- TODO -->
 
 
             </vnsMFunc>
