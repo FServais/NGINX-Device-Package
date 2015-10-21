@@ -41,6 +41,11 @@
                 <vnsComparison cmp="eq" name="hash" value="hash"/>
             </vnsComposite>
 
+            <vnsComposite comp="or" name="isBoolean">
+                <vnsComparison cmp="match" name="true" value="true"/>
+                <vnsComparison cmp="match" name="false" value="false"/>
+            </vnsComposite>
+
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
             <!--  CLUSTER AND DEVICE CONFIGURATION PART  -->
@@ -61,26 +66,34 @@
             <!-- Global functional device configuration -->
             <vnsMDevCfg name="DeviceConfig">
 
-                <!-- Server pool -->
-                <vnsMFolder key="serverpool"
-                            description="Configure Server Pool"
-                            dispLabel="Configure Server Pool"
-                            dispFeature="Server">
+                <!-- Server pool (backend) -->
+                <vnsMFolder key="upstream"
+                            description="Configure the backend (upstream)"
+                            dispLabel="Configure the backend (upstream)"
+                            dispFeature="Server"
+                            cardinality="n">
                             <!--scopedBy="epg"-->
-                            <!--cardinality="n"-->
 
-                    <vnsMParam key="serverpoolname" description="Name of the Server Pool" mandatory="true" dType="str" dispLabel="Name of the Server Pool"/>
+                    <vnsMParam key="upstreamName" description="Name of the backend" mandatory="true" dType="str" dispLabel="Name of the backend"/>
+
+                    <vnsMParam key="lbalgo" description="Load-balancing algorithm" mandatory="false" dType="str" dispLabel="Load-balancing algorithm" validation="isLBAlgo"/>
 
                     <vnsMFolder key="server"
-                                description="Server of a Server Pool"
+                                description="Server of a backend"
                                 dispLabel="Server"
                                 cardinality="n"
                                 dispFeature="LB">
                                 <!--scopedBy="epg"-->
-                        <vnsMParam key="name" description="Server name" mandatory="true" dType="str" dispLabel="Name of the Server"/>
-                        <vnsMParam key="ip" description="IP address of the server" mandatory="true" dType="str" dispLabel="IP address of the server" validation="isIPv4Addr"/>
+                        <!-- Connectivity -->
+                        <vnsMParam key="ip" description="Address of the server" mandatory="true" dType="str" dispLabel="Address of the server" validation="isIPv4Addr"/>
                         <vnsMParam key="port" description="Port of the server" mandatory="false" dType="str" dispLabel="Port of the server"/>
 
+                        <!-- Parameters -->
+                        <vnsMParam key="weight" description="Weight given to the server" mandatory="false" dType="str" dispLabel="Weight given to the server"/>
+                        <vnsMParam key="max_fails" description="Maximum number of unsuccessful attempts during fail_timeout" mandatory="false" dType="str" dispLabel="Maximum number of unsuccessful attempts during fail_timeout"/>
+                        <vnsMParam key="fail_timeout" description="Consider the server unavailable if max_fails is reached during this time" mandatory="false" dType="str" dispLabel="Consider the server unavailable if max_fails is reached during this time"/>
+                        <vnsMParam key="backup" description="Mark the server as a backup" mandatory="false" dType="str" dispLabel="Mark the server as a backup" validation="isBoolean"/>
+                        <!-- TODO : Continue the list of parameters : http://nginx.org/en/docs/http/ngx_http_upstream_module.html#server -->
 
                     </vnsMFolder>
                 </vnsMFolder>
@@ -95,15 +108,6 @@
                     <vnsMParam key="ip" description="IP address" mandatory="true" dType="str" dispLabel="IP address" validation="isIPv4Addr"/>
                     <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
 
-                </vnsMFolder>
-
-
-                <!-- Load balancing policy -->
-                <!-- TODO: Change, move from validation to pre-set list of algorithm, instead of having to add them one by one -->
-                <vnsMFolder key="policy"
-                            description="Configure the load balancing algorithm"
-                            dispLabel="Configure the load balancing algorithm">
-                    <vnsMParam key="algorithm" description="Algorithm" mandatory="no" dType="str" dispLabel="Algorithm" validation="isLBAlgo"/>
                 </vnsMFolder>
 
 
@@ -137,13 +141,13 @@
                 <vnsMFeature name="Policy" dispOrder="2"/>
 
                 <!-- Folders -->
-                <vnsMFolder key="serverpoolCfg"
-                            description="Server Pool"
-                            dispLabel="Server Pool"
+                <vnsMFolder key="upstreamCfg"
+                            description="backend"
+                            dispLabel="backend"
                             dispFeature="Server"
                             cardinality="n">
-                    <vnsMRel dispLabel="Select Server Pool" key="serverpoolRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-serverpool"/>
+                    <vnsMRel dispLabel="Select backend" key="upstreamRel">
+                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-upstream"/>
                     </vnsMRel>
                 </vnsMFolder>
 
@@ -153,15 +157,6 @@
                             dispFeature="LB">
                     <vnsMRel dispLabel="Select Server Load Balancer" key="lbserverRel">
                         <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-lbserver"/>
-                    </vnsMRel>
-                </vnsMFolder>
-
-                <vnsMFolder key="policyCfg"
-                            description="Policy"
-                            dispLabel="Policy"
-                            dispFeature="Policy">
-                    <vnsMRel dispLabel="Select algorithm" key="policyRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-policy"/>
                     </vnsMRel>
                 </vnsMFolder>
 
