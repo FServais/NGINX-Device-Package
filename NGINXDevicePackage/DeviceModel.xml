@@ -16,6 +16,15 @@
                           versionExpr="0.0.1"
                           packageName="DeviceScript.py"/>
 
+            <vnsDevProf name="nginx" type="VIRTUAL">
+                <vnsDevInt name="eth0"/>
+                <vnsDevInt name="eth1"/>
+                <vnsDevInt name="eth2"/>
+                <vnsDevInt name="eth3"/>
+                <vnsDevInt name="eth4"/>
+                <vnsDevInt name="eth5"/>
+            </vnsDevProf>
+
             <!-- Credentials -->
             <vnsMCred name="username" key="username"/>
             <vnsMCredSecret name="password" key="password"/>
@@ -58,8 +67,8 @@
             <!--  CLUSTER AND DEVICE CONFIGURATION PART  -->
             <!-- - - - - - - - - - - - - - - - - - - - - -->
 
-            <vnsClusterCfg name="Cluster">
-                <vnsDevCfg name="Device">
+            <vnsClusterCfg name="ClusterConfig">
+                <vnsDevCfg name="DeviceConfig">
 
                 </vnsDevCfg>
             </vnsClusterCfg>
@@ -76,30 +85,28 @@
                 <!-- Server pool (backend) -->
                 <vnsMFolder key="upstream"
                             description="Configure the backend (upstream)"
-                            dispLabel="Configure the backend (upstream)"
-                            dispFeature="Server"
+                            dispLabel="Backend"
                             cardinality="n">
                             <!--scopedBy="epg"-->
 
-                    <vnsMParam key="upstreamName" description="Name of the backend" mandatory="true" dType="str" dispLabel="Name of the backend"/>
+                    <vnsMParam key="upstreamName" description="Name of the backend" mandatory="true" dType="str" dispLabel="Name"/>
 
                     <vnsMParam key="lbalgo" description="Load-balancing algorithm" mandatory="false" dType="str" dispLabel="Load-balancing algorithm" validation="isLBAlgo"/>
 
                     <vnsMFolder key="server"
                                 description="Server of a backend"
                                 dispLabel="Server"
-                                cardinality="n"
-                                dispFeature="LB">
+                                cardinality="n">
                                 <!--scopedBy="epg"-->
                         <!-- Connectivity -->
-                        <vnsMParam key="ip" description="Address of the server" mandatory="true" dType="str" dispLabel="Address of the server"/>
-                        <vnsMParam key="port" description="Port of the server" mandatory="false" dType="str" dispLabel="Port of the server"/>
+                        <vnsMParam key="ip" description="Address of the server" mandatory="true" dType="str" dispLabel="Address"/>
+                        <vnsMParam key="port" description="Port of the server" mandatory="false" dType="str" dispLabel="Port"/>
 
                         <!-- Parameters -->
-                        <vnsMParam key="weight" description="Weight given to the server" mandatory="false" dType="str" dispLabel="Weight given to the server"/>
-                        <vnsMParam key="max_fails" description="Maximum number of unsuccessful attempts during fail_timeout" mandatory="false" dType="str" dispLabel="Maximum number of unsuccessful attempts during fail_timeout"/>
-                        <vnsMParam key="fail_timeout" description="Consider the server unavailable if max_fails is reached during this time" mandatory="false" dType="str" dispLabel="Consider the server unavailable if max_fails is reached during this time"/>
-                        <vnsMParam key="backup" description="Mark the server as a backup" mandatory="false" dType="str" dispLabel="Mark the server as a backup" validation="isBoolean"/>
+                        <vnsMParam key="weight" description="Weight given to the server" mandatory="false" dType="str" dispLabel="Weight"/>
+                        <vnsMParam key="max_fails" description="Maximum number of unsuccessful attempts during fail_timeout" mandatory="false" dType="str" dispLabel="max_fails"/>
+                        <vnsMParam key="fail_timeout" description="Consider the server unavailable if max_fails is reached during this time" mandatory="false" dType="str" dispLabel="fail_timeout"/>
+                        <vnsMParam key="backup" description="Mark the server as a backup" mandatory="false" dType="str" dispLabel="backup" validation="isBoolean"/>
                         <!-- TODO : Continue the list of parameters : http://nginx.org/en/docs/http/ngx_http_upstream_module.html#server -->
 
                     </vnsMFolder>
@@ -108,13 +115,9 @@
                 <!-- Frontend server Load Balancer -->
                 <vnsMFolder key="frontendServer"
                             description="Configure the frontend server"
-                            dispLabel="Configure the frontend server"
+                            dispLabel="Frontend"
                             cardinality="n">
                             <!--scopedBy="epg"-->
-                    <!--
-                    <vnsMParam key="ip" description="IP address" mandatory="true" dType="str" dispLabel="IP address" validation="isIPv4Addr"/>
-                    <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
-                    -->
 
                     <vnsMRel key="listen" dispLabel="Listen" cardinality="1" description="Listen">
                         <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-listen"/>
@@ -130,18 +133,17 @@
                 <!-- See http://nginx.org/en/docs/http/ngx_http_core_module.html#listen -->
                 <vnsMFolder key="listen"
                             description="Listen directive"
-                            dispLabel="Listen directive"
+                            dispLabel="Listen"
                             cardinality="1">
                     <vnsMParam key="address" description="Address" mandatory="false" dType="str" dispLabel="Address"/> <!-- Not mandatory, default : *, example: *:80 -->
                     <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
-                    <vnsMParam key="isDefault" description="Is the default server" mandatory="false" dType="str" dispLabel="Is the default server" validation="isBoolean"/>
+                    <vnsMParam key="isDefault" description="Is the default server" mandatory="false" dType="str" dispLabel="Default" validation="isBoolean"/>
 
 
                 </vnsMFolder>
 
                 <!-- Location -->
                 <!-- "location [= | ~ | ~* | $~] uri {...}", see http://nginx.org/en/docs/http/ngx_http_core_module.html#location -->
-
                 <vnsMFolder key="location"
                             description="Location"
                             dispLabel="Location"
@@ -149,7 +151,7 @@
                     <vnsMParam key="uri" description="URI" mandatory="true" dType="str" dispLabel="URI"/>
                     <vnsMParam key="modifier" description="Modifier" mandatory="false" dType="str" dispLabel="Modifier" validation="isModifier"/>
 
-                    <vnsMParam key="proxy_pass" description="proxy_pass directive, name of the backend" mandatory="true" dType="str" dispLabel="proxy_pass directive, name of the backend"/>
+                    <vnsMParam key="proxy_pass" description="proxy_pass directive, name of the backend" mandatory="true" dType="str" dispLabel="proxy_pass"/>
 
                 </vnsMFolder>
 
@@ -178,15 +180,12 @@
                 </vnsMConn>
 
                 <!-- Features -->
-                <vnsMFeature name="Server" dispOrder="0"/>
-                <vnsMFeature name="LB" dispOrder="1"/>
-                <vnsMFeature name="Policy" dispOrder="2"/>
+                <!--<vnsMFeature name="Server" dispOrder="0"/>-->
 
                 <!-- Folders -->
                 <vnsMFolder key="upstreamCfg"
                             description="backend"
                             dispLabel="backend"
-                            dispFeature="Server"
                             cardinality="n">
                     <vnsMRel dispLabel="Select backend" key="upstreamRel">
                         <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-upstream"/>
@@ -195,8 +194,7 @@
 
                 <vnsMFolder key="frontendServerCfg"
                             description="Front-end server"
-                            dispLabel="Front-end server"
-                            dispFeature="LB">
+                            dispLabel="Front-end server">
                     <vnsMRel dispLabel="Select front-end server" key="frontendServerRel">
                         <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-frontendServer"/>
                     </vnsMRel>
