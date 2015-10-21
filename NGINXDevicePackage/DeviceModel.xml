@@ -2,7 +2,7 @@
 
 <polUni>
     <infraInfra>
-        <vnsMDev vendor="NGINX" model="NGINX" version="0.0.1">
+        <vnsMDev vendor="nginx" model="nginx" version="0.0.1">
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
             <!--              GENERIC PART               -->
@@ -10,7 +10,7 @@
 
             <!-- Script -->
             <!-- TODO: complete versionExpr -->
-            <vnsDevScript name="NGINX"
+            <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
                           minorversion="1"
                           versionExpr="0.0.1"
@@ -44,6 +44,13 @@
             <vnsComposite comp="or" name="isBoolean">
                 <vnsComparison cmp="match" name="true" value="true"/>
                 <vnsComparison cmp="match" name="false" value="false"/>
+            </vnsComposite>
+
+            <vnsComposite comp="or" name="isModifier">
+                <vnsComparison cmp="eq" name="eq" value="eq"/> <!-- Exact match -->
+                <vnsComparison cmp="eq" name="CIregex" value="CIregex"/> <!-- Case insensitive regex -->
+                <vnsComparison cmp="eq" name="CSregex" value="CSregex"/> <!-- Case sensitive regex -->
+                <vnsComparison cmp="eq" name="not_check" value="not_check"/> <!-- Regex is not checked -->
             </vnsComposite>
 
 
@@ -85,7 +92,7 @@
                                 dispFeature="LB">
                                 <!--scopedBy="epg"-->
                         <!-- Connectivity -->
-                        <vnsMParam key="ip" description="Address of the server" mandatory="true" dType="str" dispLabel="Address of the server" validation="isIPv4Addr"/>
+                        <vnsMParam key="ip" description="Address of the server" mandatory="true" dType="str" dispLabel="Address of the server"/>
                         <vnsMParam key="port" description="Port of the server" mandatory="false" dType="str" dispLabel="Port of the server"/>
 
                         <!-- Parameters -->
@@ -98,18 +105,53 @@
                     </vnsMFolder>
                 </vnsMFolder>
 
-                <!-- Server Load Balancer -->
-                <vnsMFolder key="lbserver"
-                            description="Configure the Server Load Balancer"
-                            dispLabel="Configure the Server Load Balancer"
+                <!-- Frontend server Load Balancer -->
+                <vnsMFolder key="frontendServer"
+                            description="Configure the frontend server"
+                            dispLabel="Configure the frontend server"
                             cardinality="n">
                             <!--scopedBy="epg"-->
-                    <vnsMParam key="name" description="Name" mandatory="true" dType="str" dispLabel="Name"/>
+                    <!--
                     <vnsMParam key="ip" description="IP address" mandatory="true" dType="str" dispLabel="IP address" validation="isIPv4Addr"/>
                     <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
+                    -->
+
+                    <vnsMRel key="listen" dispLabel="Listen" cardinality="1" description="Listen">
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-listen"/>
+                    </vnsMRel>
+
+                    <vnsMRel key="location" dispLabel="Location" cardinality="1" description="Location">
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-location"/>
+                    </vnsMRel>
 
                 </vnsMFolder>
 
+                <!-- Listen directive -->
+                <!-- See http://nginx.org/en/docs/http/ngx_http_core_module.html#listen -->
+                <vnsMFolder key="listen"
+                            description="Listen directive"
+                            dispLabel="Listen directive"
+                            cardinality="1">
+                    <vnsMParam key="address" description="Address" mandatory="false" dType="str" dispLabel="Address"/> <!-- Not mandatory, default : *, example: *:80 -->
+                    <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
+                    <vnsMParam key="isDefault" description="Is the default server" mandatory="false" dType="str" dispLabel="Is the default server" validation="isBoolean"/>
+
+
+                </vnsMFolder>
+
+                <!-- Location -->
+                <!-- "location [= | ~ | ~* | $~] uri {...}", see http://nginx.org/en/docs/http/ngx_http_core_module.html#location -->
+
+                <vnsMFolder key="location"
+                            description="Location"
+                            dispLabel="Location"
+                            cardinality="1">
+                    <vnsMParam key="uri" description="URI" mandatory="true" dType="str" dispLabel="URI"/>
+                    <vnsMParam key="modifier" description="Modifier" mandatory="false" dType="str" dispLabel="Modifier" validation="isModifier"/>
+
+                    <vnsMParam key="proxy_pass" description="proxy_pass directive, name of the backend" mandatory="true" dType="str" dispLabel="proxy_pass directive, name of the backend"/>
+
+                </vnsMFolder>
 
             </vnsMDevCfg>
 
@@ -128,11 +170,11 @@
 
                 <!-- Connector Objects -->
                 <vnsMConn name="internal" encType="vlan" dir="output">
-                    <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-internal"/>
+                    <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-0.0.1/mIfLbl-internal"/>
                 </vnsMConn>
 
                 <vnsMConn name="external" encType="vlan" dir="input">
-                    <vnsRsInterface tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mIfLbl-external"/>
+                    <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-0.0.1/mIfLbl-external"/>
                 </vnsMConn>
 
                 <!-- Features -->
@@ -147,16 +189,16 @@
                             dispFeature="Server"
                             cardinality="n">
                     <vnsMRel dispLabel="Select backend" key="upstreamRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-upstream"/>
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-upstream"/>
                     </vnsMRel>
                 </vnsMFolder>
 
-                <vnsMFolder key="lbserverCfg"
-                            description="Server Load Balancer"
-                            dispLabel="Server Load Balancer"
+                <vnsMFolder key="frontendServerCfg"
+                            description="Front-end server"
+                            dispLabel="Front-end server"
                             dispFeature="LB">
-                    <vnsMRel dispLabel="Select Server Load Balancer" key="lbserverRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-NGINX-NGINX-0.0.1/mDevCfg/mFolder-lbserver"/>
+                    <vnsMRel dispLabel="Select front-end server" key="frontendServerRel">
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-frontendServer"/>
                     </vnsMRel>
                 </vnsMFolder>
 
