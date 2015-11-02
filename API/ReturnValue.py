@@ -14,3 +14,7 @@ class ReturnValue:
 
     def get_return_value(self):
         return self.return_value
+
+if __name__ == "__main__":
+    ret = ReturnValue(0, [], [])
+    print(ret)
