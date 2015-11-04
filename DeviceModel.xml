@@ -2,7 +2,7 @@
 
 <polUni>
     <infraInfra>
-        <vnsMDev vendor="NGINX" model="NGINX" version="0.0.1" funcMask="GoTo">
+        <vnsMDev vendor="nginx" model="nginx" version="0.0.1" funcMask="GoTo">
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
             <!--              GENERIC PART               -->
