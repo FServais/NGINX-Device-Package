@@ -12,6 +12,7 @@ class VDevs:
 
 class Device:
     def __init__(self, device_dict):
+
         self.devices = []
 
         self.host_ip = device_dict.get('host', None)
@@ -59,5 +60,7 @@ if __name__ == "__main__":
                  'vdevs': [{'ctxName': 'cokectx1', 'id': 9597, 'tenant': 'coke'}],
                  'virtual': True}
 
+    device2 = {'creds': {'username': 'fservais', 'password': '***REMOVED***'}, 'host': '10.9.14.73', 'port': 80, 'virtual': True}
     d = Device(device)
-    print(d.vdevs[0].ctx_name)
+    d2 = Device(device2)
+    print(d2.virtual)

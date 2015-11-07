@@ -32,6 +32,7 @@ class NginxConfiguration:
     def __repr__(self):
         return str(self)
 
+
 if __name__ == "__main__":
     loc = NginxServerLocation()
     frontend = NginxFrontend()
