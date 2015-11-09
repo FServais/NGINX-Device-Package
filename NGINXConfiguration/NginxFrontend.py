@@ -7,8 +7,15 @@ class NginxFrontend:
     __LISTEN_DIRECTIVE__NAME = "listen"
     __SERVER_BLOCK__NAME = "server"
 
-    def __init__(self, listen_port=80):
-        self.locations = []
+    def __init__(self, listen_port=80, locations=None):
+        if locations is not None:
+            if type(locations) is not list:
+                self.locations = [locations]
+            else:
+                self.locations = locations
+        else:
+            self.locations = []
+
         self.listen_port = listen_port
 
     def add_location(self, location):

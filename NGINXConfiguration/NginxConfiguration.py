@@ -9,9 +9,16 @@ __author__ = 'Fabrice Servais'
 
 class NginxConfiguration:
 
-    def __init__(self, frontend=None, backends=[]):
+    def __init__(self, frontend=None, backends=None):
         self.frontend = frontend
-        self.backends = backends
+
+        if backends is not None:
+            if type(backends) is not list:
+                self.backends = [backends]
+            else:
+                self.backends = backends
+        else:
+            self.backends = []
 
     def set_frontend_config(self, frontend_config):
         """Set the configuration of the frontend server
