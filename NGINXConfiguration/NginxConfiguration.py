@@ -9,7 +9,7 @@ __author__ = 'Fabrice Servais'
 
 class NginxConfiguration:
 
-    def __init__(self, frontend=None, backends = []):
+    def __init__(self, frontend=None, backends=[]):
         self.frontend = frontend
         self.backends = backends
 
@@ -27,23 +27,26 @@ class NginxConfiguration:
         self.backends.append(backend)
 
     def __str__(self):
-        return "{{ 'http': {{ 'frontend': {front}, 'backends': {back} }} }}".format(front=self.frontend, back=list(map(lambda x: eval(x.__str__()), self.backends)))
+        return "{}".format({'http': {'frontend' : self.frontend, 'backends': self.backends}})
 
     def __repr__(self):
         return str(self)
 
+    def export(self):
+        return '\n'.join([str(self.frontend.export())] + [str(backend.export()) for backend in self.backends])
+
 
 if __name__ == "__main__":
-    loc = NginxServerLocation()
+    loc = NginxServerLocation("backend", '/')
     frontend = NginxFrontend()
     frontend.add_location(loc)
 
     back1 = NginxBackend()
-    b_serv1 = NginxBackendServer(address="127.0.0.1", port="80")
-    b_serv1.set_parameters(NginxBackendServerParameters(backup="True", max_fails="3"))
+    b_serv1 = NginxBackendServer(address="127.0.0.1", port=80)
+    b_serv1.set_parameters(NginxBackendServerParameters(backup=True, max_fails=3, weight=3))
     back1.add_backend_server(b_serv1)
 
-    config = NginxConfiguration(frontend=frontend)
-    config.add_backend(back1)
+    config = NginxConfiguration(frontend=frontend, backends=[back1])
 
-    print("{}".format(config))
+    print(config)
+    print(config.export())

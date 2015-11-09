@@ -1,7 +1,11 @@
+from NGINXConfiguration.NginxBackendServer import NginxBackendServer
+from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
+
 __author__ = 'Fabrice Servais'
 
 
 class NginxBackend:
+    __UPSTREAM_BLOCK_NAME = "upstream"
 
     def __init__(self, method="round-robin", name="backend", server_pool=[]):
         self.method = method
@@ -15,7 +19,20 @@ class NginxBackend:
         self.server_pool.append(backend_server)
 
     def __str__(self):
-        return "{{ 'method': '{method}', 'name': '{name}', 'server_pool': {pool} }}".format(method=self.method, name=self.name, pool=map(lambda x: eval(x.__str__()), self.server_pool))
+        return "{}".format({'method': self.method, 'name': self.name, 'server_pool': self.server_pool})
 
     def __repr__(self):
         return str(self)
+
+    def export(self):
+        from ExportConfiguration.Block import Block
+        return Block(self.__UPSTREAM_BLOCK_NAME, "backend", [server.export() for server in self.server_pool])
+
+if __name__ == "__main__":
+    back1 = NginxBackend()
+    b_serv1 = NginxBackendServer(address="127.0.0.1", port=80, params=NginxBackendServerParameters(backup=True, max_fails=3))
+
+    back1.add_backend_server(b_serv1)
+
+    print(back1)
+    print(back1.export())

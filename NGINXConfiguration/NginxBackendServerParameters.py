@@ -2,8 +2,7 @@ __author__ = 'Fabrice Servais'
 
 
 class NginxBackendServerParameters:
-
-    def __init__(self, backup="False", down="False", fail_timeout="-1", max_fails="-1", weight="-1"):
+    def __init__(self, backup=False, down=False, fail_timeout=-1, max_fails=-1, weight=-1):
         self.backup = backup
         self.down = down
         self.fail_timeout = fail_timeout
@@ -11,29 +10,50 @@ class NginxBackendServerParameters:
         self.weight = weight
 
     def __str__(self):
-        to_print_backup = "'backup': '{}'".format(self.backup) if self.backup != "False" else ""
-        to_print_down = "'down': '{}'".format(self.down) if self.down != "False" else ""
-        to_print_fail_timeout = "'fail_timeout': '{}'".format(self.fail_timeout) if self.fail_timeout != "-1" else ""
-        to_print_max_fails = "'max_fails': '{}'".format(self.max_fails) if self.max_fails != "-1" else ""
-        to_print_weight = "'weight': '{}'".format(self.weight) if self.weight != "-1" else ""
+        to_return = {}
 
-        l = [to_print_backup, to_print_down, to_print_fail_timeout, to_print_max_fails, to_print_weight]
+        if self.backup:
+            to_return["backup"] = self.backup
 
-        to_return = ""
-        for i in range(0, len(l)):
-            if l[i] != "":
-                to_return += l[i]
+        if self.down:
+            to_return["down"] = self.down
 
-                if i != len(l)-1:
-                    to_return += ', '
+        if self.fail_timeout != -1:
+            to_return["fail_timeout"] = self.fail_timeout
 
-        return "{{ {} }}".format(to_return)
+        if self.max_fails != -1:
+            to_return["max_fails"] = self.max_fails
+
+        if self.weight != -1:
+            to_return["weight"] = self.weight
+
+        return "{}".format(to_return)
 
     def __repr__(self):
         return str(self)
 
-    # def __str__(self):
-    #     return "{{ 'backup':'{backup}' }}".format(backup=self.backup)
-    #
-    # def __repr__(self):
-    #     return str(self)
+    def export(self):
+        to_return = []
+
+        if self.backup:
+            to_return.append("backup")
+
+        if self.down:
+            to_return.append("down")
+
+        if self.fail_timeout != -1:
+            to_return.append("fail_timeout={}".format(self.fail_timeout))
+
+        if self.max_fails != -1:
+            to_return.append("max_fails={}".format(self.max_fails))
+
+        if self.weight != -1:
+            to_return.append("weight={}".format(self.weight))
+
+        return to_return
+
+
+if __name__ == "__main__":
+    params = NginxBackendServerParameters(backup=True, down=False, fail_timeout=4)
+    print(params)
+    print(params.export())

@@ -16,7 +16,13 @@ class Block:
         else:
             self.parameters = []
 
-        self.lines = lines if lines is not None else []
+        if lines is not None:
+            if type(lines) is not list:
+                self.lines = [lines]
+            else:
+                self.lines = lines
+        else:
+            self.lines = []
 
     def add_parameters(self, *parameters):
         self.parameters.extend(list(parameters))
@@ -26,7 +32,7 @@ class Block:
 
     def __str__(self):
         # First line
-        header = ' '.join([self.name] + self.parameters + ['{'])
+        header = ' '.join([self.name] + map(str, self.parameters) + ['{'])
 
         # Content
         content = '\n'.join([str(l) for l in self.lines])

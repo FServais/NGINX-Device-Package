@@ -15,7 +15,7 @@ class Directive:
             self.parameters = []
 
     def __str__(self):
-        to_return = [self.name] + self.parameters
+        to_return = [self.name] + map(str, self.parameters)
         return ' '.join(to_return) + ';'
 
     def __repr__(self):
