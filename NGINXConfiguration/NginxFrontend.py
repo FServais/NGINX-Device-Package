@@ -8,6 +8,11 @@ class NginxFrontend:
     __SERVER_BLOCK__NAME = "server"
 
     def __init__(self, listen_port=80, locations=None):
+        """
+        Constructor.
+        :param listen_port: Listening port of the server (frontend).
+        :param locations: Type: NginxServerLocation or List<NginxServerLocation>, list of 'location' directives.
+        """
         if locations is not None:
             if type(locations) is not list:
                 self.locations = [locations]
@@ -19,7 +24,8 @@ class NginxFrontend:
         self.listen_port = listen_port
 
     def add_location(self, location):
-        """Add a 'location' block to the (frontend) server block.
+        """
+        Add a 'location' block to the (frontend) server block.
 
         :param location: Type: NginxServerLocation, 'location' block
         """
@@ -32,10 +38,10 @@ class NginxFrontend:
         return str(self)
 
     def export(self):
-        from ExportConfiguration.Block import Block
+        from NginxExportConfiguration.Block import Block
         block = Block(self.__SERVER_BLOCK__NAME)
 
-        from ExportConfiguration.Directive import Directive
+        from NginxExportConfiguration.Directive import Directive
         block.add_lines(Directive(self.__LISTEN_DIRECTIVE__NAME, self.listen_port))
         for location in self.locations:
             block.add_lines(location.export())
@@ -44,9 +50,7 @@ class NginxFrontend:
 
 
 if __name__ == "__main__":
-    loc = NginxServerLocation("backend", '/')
-    frontend = NginxFrontend()
-    frontend.add_location(loc)
+    frontend = NginxFrontend(locations=NginxServerLocation("backend", '/'))
 
     print(frontend)
     print(frontend.export())

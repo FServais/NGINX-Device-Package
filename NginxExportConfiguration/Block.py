@@ -1,9 +1,35 @@
-from ExportConfiguration.Directive import Directive
+from NginxExportConfiguration.Directive import Directive
 
 __author__ = 'Fabrice Servais'
 
 
 class Block:
+    """
+    Class that represents a block in a NGINX configuration file.
+    Example:
+        upstream backend {
+            server backend1.example.com       weight=5;
+            server backup2.example.com:8080   backup;
+        }
+
+        Here, there is one block (upstream).
+
+    A Block is composed of a 'name', an optional set of 'parameters' (or single parameter), and a content (= 'lines')
+    either of type 'Directive' or 'Block'.
+
+    Examples of usage:
+        - Block("upstream", "backend") corresponds to:
+            upstream backend {
+
+            }
+        - Block(name="block1", lines=[Directive("command", "argument"), Block("block2", "inside")]) corresponds to:
+            block1 {
+                command argument;
+                block2 inside {
+
+                }
+            }
+    """
 
     def __init__(self, name, parameters=None, lines=None):
         self.name = name
@@ -48,10 +74,10 @@ class Block:
         return str(self)
 
 if __name__ == "__main__":
-    upstr = Block("upstream", ["backend", "option"])
+    upstream = Block("upstream", ["backend", "option"])
     server1 = Directive("server", ["10.9.217.1:80", 'backup'])
     server2 = Directive("server", "10.9.217.2:80")
-    upstr.add_lines(server1, server2)
+    upstream.add_lines(server1, server2)
 
     serverBlock = Block("server")
     locationBlock = Block("location", "/")
@@ -59,5 +85,5 @@ if __name__ == "__main__":
 
     serverBlock.add_lines(locationBlock)
 
-    print(upstr)
+    print(upstream)
     print(serverBlock)

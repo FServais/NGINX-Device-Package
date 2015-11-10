@@ -10,6 +10,12 @@ __author__ = 'Fabrice Servais'
 class NginxConfiguration:
 
     def __init__(self, frontend=None, backends=None):
+        """
+        Constructor.
+        :param frontend: Type: NginxFrontend, Frontend
+        :param backends: Type: NginxBackend or List<NginxBackend>, Backend(s)
+        :return:
+        """
         self.frontend = frontend
 
         if backends is not None:
@@ -21,8 +27,8 @@ class NginxConfiguration:
             self.backends = []
 
     def set_frontend_config(self, frontend_config):
-        """Set the configuration of the frontend server
-
+        """
+        Set the configuration of the frontend server
         :param frontend_config: Type: NginxFrontend, configuration of the frontend
         """
         self.frontend = frontend_config
@@ -33,6 +39,12 @@ class NginxConfiguration:
         """
         self.backends.append(backend)
 
+    def add_backends(self, backends):
+        """Add a list of 'backends' blocks, i.e. a backend pool
+        :param backends: Type: List<NginxBackend>, backends (= 'upstream')
+        """
+        self.backends.extend(backends)
+
     def __str__(self):
         return "{}".format({'http': {'frontend' : self.frontend, 'backends': self.backends}})
 
@@ -40,7 +52,16 @@ class NginxConfiguration:
         return str(self)
 
     def export(self):
-        return '\n'.join([str(self.frontend.export())] + [str(backend.export()) for backend in self.backends])
+        """
+        Generate the String containing the corresponding configuration for NGINX.
+        :return: String of the configuration, usable by NGINX.
+        """
+        front = [str(self.frontend.export())] if self.frontend is not None else []
+        back = [str(backend.export()) for backend in self.backends]
+
+        content = front + back
+
+        return '\n'.join(content)
 
 
 if __name__ == "__main__":
@@ -53,7 +74,7 @@ if __name__ == "__main__":
     b_serv1.set_parameters(NginxBackendServerParameters(backup=True, max_fails=3, weight=3))
     back1.add_backend_server(b_serv1)
 
-    config = NginxConfiguration(frontend=frontend, backends=[back1])
+    config = NginxConfiguration(frontend=frontend, backends=back1)
 
     print(config)
     print(config.export())

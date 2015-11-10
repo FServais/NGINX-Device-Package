@@ -18,8 +18,7 @@ backend = NginxBackend(name=backend_name, server_pool=[server1, server2])
 
 # -- Frontend
 # Location
-location = NginxServerLocation(backend_name, '/')
-frontend = NginxFrontend(locations=location)
+frontend = NginxFrontend(locations=NginxServerLocation(backend_name, '/'))
 
 # Configuration
 config = NginxConfiguration(frontend, backend)
