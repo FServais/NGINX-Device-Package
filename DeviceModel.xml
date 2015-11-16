@@ -177,7 +177,7 @@
 
 
             <!-- Function configuration : Load balancer -->
-            <vnsMFunc name="Load_balancer">
+            <vnsMFunc name="LoadBalancer">
 
                 <!-- Image -->
                 <vnsMImage name="cisco.gif"/>
@@ -219,7 +219,58 @@
             </vnsMFunc>
 
 
+            <vnsAbsFuncProfContr name="FunctionProfiles">
+                <vnsAbsFuncProfGrp name="NginxFunctionProfileGroup">
+                    <vnsAbsFuncProf name="LoadBalancer">
+                        <vnsRsProfToMFunc tDn="uni/infra/mDev-nginx-nginx-1.0/mFunc-LoadBalancer"/>
 
+                        <vnsAbsDevCfg>
+                            <!-- Backend -->
+                            <vnsAbsFolder key="upstream" name="upstream">
+                                <vnsAbsParam name="upstreamName" key="upstreamName" value="backend"/>
+                                <vnsAbsFolder key="server" name="web1">
+                                    <vnsAbsParam name="ip" key="ip" value="127.0.0.1"/>
+                                    <vnsAbsParam name="port" key="port" value="8001"/>
+                                </vnsAbsFolder>
+                                <vnsAbsFolder key="server" name="web2">
+                                    <vnsAbsParam name="ip" key="ip" value="127.0.0.1"/>
+                                    <vnsAbsParam name="port" key="port" value="8002"/>
+                                </vnsAbsFolder>
+                            </vnsAbsFolder>
+
+                            <!-- Listen -->
+                            <vnsAbsFolder key="listen" name="listen">
+                                <vnsAbsParam name="port" key="port" value="80"/>
+                            </vnsAbsFolder>
+
+                            <!-- Location -->
+                            <vnsAbsFolder key="location" name="location">
+                                <vnsAbsParam name="uri" key="uri" value="/"/>
+                                <vnsAbsParam name="backend_name" key="backend_name" value="backend"/>
+                            </vnsAbsFolder>
+
+                            <!-- Frontend -->
+                            <vnsAbsFolder key="frontendServer" name="frontendServer">
+                                <vnsAbsCfgRel name="listenRel" key="listen" targetName="listen"/>
+                                <vnsAbsCfgRel name="locationRel" key="location" targetName="location"/>
+                            </vnsAbsFolder>
+
+                        </vnsAbsDevCfg>
+
+                        <vnsAbsFuncCfg>
+                            <vnsAbsFolder key="upstreamCfg" name="upstreamCfg">
+                                <vnsAbsCfgRel name="upstreamRel" key="upstreamRel" targetName="upstream"/>
+                            </vnsAbsFolder>
+                            <vnsAbsFolder key="frontendServerCfg" name="frontendServerCfg">
+                                <vnsAbsCfgRel name="frontendServerRel" key="frontendServerRel" targetName="frontendServer"/>
+                            </vnsAbsFolder>
+
+                        </vnsAbsFuncCfg>
+
+
+                    </vnsAbsFuncProf>
+                </vnsAbsFuncProfGrp>
+            </vnsAbsFuncProfContr>
 
         </vnsMDev>
     </infraInfra>
