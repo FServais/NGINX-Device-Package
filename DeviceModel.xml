@@ -2,7 +2,7 @@
 
 <polUni>
     <infraInfra>
-        <vnsMDev vendor="nginx" model="nginx" version="0.0.1" funcMask="GoTo">
+        <vnsMDev vendor="nginx" model="nginx" version="1.0" funcMask="GoTo">
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
             <!--              GENERIC PART               -->
@@ -12,8 +12,8 @@
             <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="1"
-                          versionExpr="0.0.1"
+                          minorversion="5"
+                          versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
             <vnsDevProf name="nginx" type="VIRTUAL">
@@ -55,11 +55,20 @@
                 <vnsComparison cmp="match" name="false" value="false"/>
             </vnsComposite>
 
+            <!-- More details at: http://nginx.org/en/docs/http/ngx_http_core_module.html#location -->
             <vnsComposite comp="or" name="isModifier">
-                <vnsComparison cmp="eq" name="eq" value="eq"/> <!-- Exact match -->
-                <vnsComparison cmp="eq" name="CIregex" value="CIregex"/> <!-- Case insensitive regex -->
-                <vnsComparison cmp="eq" name="CSregex" value="CSregex"/> <!-- Case sensitive regex -->
-                <vnsComparison cmp="eq" name="not_check" value="not_check"/> <!-- Regex is not checked -->
+                <vnsComparison cmp="eq" name="eq" value="="/> <!-- Exact match -->
+                <vnsComparison cmp="eq" name="CIregex" value="~*"/> <!-- Case insensitive regex -->
+                <vnsComparison cmp="eq" name="CSregex" value="~"/> <!-- Case sensitive regex -->
+                <vnsComparison cmp="eq" name="not_check" value="^~"/> <!-- Regex is not checked -->
+            </vnsComposite>
+
+            <vnsComposite comp="or" name="isPassMethod">
+                <vnsComparison cmp="eq" name="proxy_pass" value="proxy_pass"/>
+                <vnsComparison cmp="eq" name="fastcgi_pass" value="fastcgi_pass"/>
+                <vnsComparison cmp="eq" name="uwsgi_pass" value="uwsgi_pass"/>
+                <vnsComparison cmp="eq" name="scgi_pass" value="scgi_pass"/>
+                <vnsComparison cmp="eq" name="memcached_pass" value="memcached_pass"/>
             </vnsComposite>
 
 
@@ -120,12 +129,14 @@
                             <!--scopedBy="epg"-->
 
                     <vnsMRel key="listen" dispLabel="Listen" cardinality="1" description="Listen">
-                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-listen"/>
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-listen"/>
                     </vnsMRel>
 
-                    <vnsMRel key="location" dispLabel="Location" cardinality="1" description="Location">
-                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-location"/>
+                    <vnsMRel key="location" dispLabel="Location" cardinality="n" description="Location">
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-location"/>
                     </vnsMRel>
+
+                    <vnsMParam key="frontend_name" description="Name of the frontend server" dispLabel="Frontend name" dType="str" mandatory="false"/>
 
                 </vnsMFolder>
 
@@ -147,11 +158,12 @@
                 <vnsMFolder key="location"
                             description="Location"
                             dispLabel="Location"
-                            cardinality="1">
+                            cardinality="n">
                     <vnsMParam key="uri" description="URI" mandatory="true" dType="str" dispLabel="URI"/>
                     <vnsMParam key="modifier" description="Modifier" mandatory="false" dType="str" dispLabel="Modifier" validation="isModifier"/>
 
-                    <vnsMParam key="proxy_pass" description="proxy_pass directive, name of the backend" mandatory="true" dType="str" dispLabel="proxy_pass"/>
+                    <vnsMParam key="backend_name" description="Name of the backend" mandatory="true" dType="str" dispLabel="Backend name"/>
+                    <vnsMParam key="pass_method" description="Pass method (default: proxy_pass)" mandatory="false" dType="str" dispLabel="Pass method" validation="isPassMethod"/>
 
                 </vnsMFolder>
 
@@ -172,11 +184,11 @@
 
                 <!-- Connector Objects -->
                 <vnsMConn name="internal" encType="vlan" dir="output">
-                    <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-0.0.1/mIfLbl-internal"/>
+                    <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-1.0/mIfLbl-internal"/>
                 </vnsMConn>
 
                 <vnsMConn name="external" encType="vlan" dir="input">
-                    <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-0.0.1/mIfLbl-external"/>
+                    <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-1.0/mIfLbl-external"/>
                 </vnsMConn>
 
                 <!-- Features -->
@@ -188,7 +200,7 @@
                             dispLabel="backend"
                             cardinality="n">
                     <vnsMRel dispLabel="Select backend" key="upstreamRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-upstream"/>
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-upstream"/>
                     </vnsMRel>
                 </vnsMFolder>
 
@@ -196,7 +208,7 @@
                             description="Front-end server"
                             dispLabel="Front-end server">
                     <vnsMRel dispLabel="Select front-end server" key="frontendServerRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-0.0.1/mDevCfg/mFolder-frontendServer"/>
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-frontendServer"/>
                     </vnsMRel>
                 </vnsMFolder>
 
