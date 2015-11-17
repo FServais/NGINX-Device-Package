@@ -12,7 +12,11 @@
             <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
+<<<<<<< HEAD
                           minorversion="6"
+=======
+                          minorversion="5"
+>>>>>>> 97c51d6dffeb8bfa1a7e9b6a2f81a981405dafc3
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -128,6 +132,7 @@
                             cardinality="n">
                             <!--scopedBy="epg"-->
 
+<<<<<<< HEAD
                                     <!-- Listen directive -->
                     <!-- See http://nginx.org/en/docs/http/ngx_http_core_module.html#listen -->
                     <vnsMFolder key="listen"
@@ -138,6 +143,19 @@
                         <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
                         <vnsMParam key="isDefault" description="Is the default server" mandatory="false" dType="str" dispLabel="Default" validation="isBoolean"/>
 
+=======
+                    <vnsMRel key="listen" dispLabel="Listen" cardinality="1" description="Listen">
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-listen"/>
+                    </vnsMRel>
+
+                    <vnsMRel key="location" dispLabel="Location" cardinality="n" description="Location">
+                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-location"/>
+                    </vnsMRel>
+
+                    <vnsMParam key="frontend_name" description="Name of the frontend server" dispLabel="Frontend name" dType="str" mandatory="false"/>
+
+                </vnsMFolder>
+>>>>>>> 97c51d6dffeb8bfa1a7e9b6a2f81a981405dafc3
 
                     </vnsMFolder>
 
@@ -153,9 +171,23 @@
                         <vnsMParam key="backend_name" description="Name of the backend" mandatory="true" dType="str" dispLabel="Backend name"/>
                         <vnsMParam key="pass_method" description="Pass method (default: proxy_pass)" mandatory="false" dType="str" dispLabel="Pass method" validation="isPassMethod"/>
 
+<<<<<<< HEAD
                     </vnsMFolder>
 
                     <vnsMParam key="frontend_name" description="Name of the frontend server" dispLabel="Frontend name" dType="str" mandatory="false"/>
+=======
+                <!-- Location -->
+                <!-- "location [= | ~ | ~* | $~] uri {...}", see http://nginx.org/en/docs/http/ngx_http_core_module.html#location -->
+                <vnsMFolder key="location"
+                            description="Location"
+                            dispLabel="Location"
+                            cardinality="n">
+                    <vnsMParam key="uri" description="URI" mandatory="true" dType="str" dispLabel="URI"/>
+                    <vnsMParam key="modifier" description="Modifier" mandatory="false" dType="str" dispLabel="Modifier" validation="isModifier"/>
+
+                    <vnsMParam key="backend_name" description="Name of the backend" mandatory="true" dType="str" dispLabel="Backend name"/>
+                    <vnsMParam key="pass_method" description="Pass method (default: proxy_pass)" mandatory="false" dType="str" dispLabel="Pass method" validation="isPassMethod"/>
+>>>>>>> 97c51d6dffeb8bfa1a7e9b6a2f81a981405dafc3
 
                 </vnsMFolder>
 
@@ -230,6 +262,7 @@
                                 </vnsAbsFolder>
                             </vnsAbsFolder>
 
+<<<<<<< HEAD
 
                             <!-- Frontend -->
                             <vnsAbsFolder key="frontendServer" name="frontendServer">
@@ -244,6 +277,23 @@
                                     <vnsAbsParam name="uri" key="uri" value="/"/>
                                     <vnsAbsParam name="backend_name" key="backend_name" value="backend"/>
                                 </vnsAbsFolder>
+=======
+                            <!-- Listen -->
+                            <vnsAbsFolder key="listen" name="listen">
+                                <vnsAbsParam name="port" key="port" value="80"/>
+                            </vnsAbsFolder>
+
+                            <!-- Location -->
+                            <vnsAbsFolder key="location" name="location">
+                                <vnsAbsParam name="uri" key="uri" value="/"/>
+                                <vnsAbsParam name="backend_name" key="backend_name" value="backend"/>
+                            </vnsAbsFolder>
+
+                            <!-- Frontend -->
+                            <vnsAbsFolder key="frontendServer" name="frontendServer">
+                                <vnsAbsCfgRel name="listenRel" key="listen" targetName="listen"/>
+                                <vnsAbsCfgRel name="locationRel" key="location" targetName="location"/>
+>>>>>>> 97c51d6dffeb8bfa1a7e9b6a2f81a981405dafc3
                             </vnsAbsFolder>
 
                         </vnsAbsDevCfg>
