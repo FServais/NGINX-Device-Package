@@ -1,19 +1,19 @@
+from NGINXConfiguration.NginxServerListen import NginxServerListen
 from NGINXConfiguration.NginxServerLocation import NginxServerLocation
 
 __author__ = 'Fabrice Servais'
 
 
 class NginxFrontend:
-    __LISTEN_DIRECTIVE__NAME = "listen"
     __SERVER_BLOCK__NAME = "server"
 
-    def __init__(self, listen_port=80, locations=None):
+    def __init__(self, listen=None, locations=None):
         """
         Constructor.
-        :param listen_port: Listening port of the server (frontend).
+        :param listen: Type: NginxServerListen, 'listen' directive of the server block.
         :param locations: Type: NginxServerLocation or List<NginxServerLocation>, list of 'location' directives.
         """
-        if locations is not None:
+        if locations:
             if type(locations) is not list:
                 self.locations = [locations]
             else:
@@ -21,7 +21,10 @@ class NginxFrontend:
         else:
             self.locations = []
 
-        self.listen_port = listen_port
+        if listen is None:
+            self.listen = NginxServerListen(port=80)
+        else:
+            self.listen = listen
 
     def add_location(self, location):
         """
@@ -32,7 +35,7 @@ class NginxFrontend:
         self.locations.append(location)
 
     def __str__(self):
-        return "{}".format({'locations': self.locations, 'listen_port': self.listen_port})
+        return "{}".format({'locations': self.locations, 'listen': self.listen})
 
     def __repr__(self):
         return str(self)
@@ -42,7 +45,7 @@ class NginxFrontend:
         block = Block(self.__SERVER_BLOCK__NAME)
 
         from NginxExportConfiguration.Directive import Directive
-        block.add_lines(Directive(self.__LISTEN_DIRECTIVE__NAME, self.listen_port))
+        block.add_lines(self.listen.export())
         for location in self.locations:
             block.add_lines(location.export())
 
