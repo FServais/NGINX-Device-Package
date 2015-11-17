@@ -10,7 +10,6 @@ from API.Device import Device
 from Insieme.Config import Result
 
 __author__ = 'Fabrice Servais'
-__version__ = "$Revision: #0 $"
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 

@@ -26,6 +26,15 @@ class NginxConfiguration:
         else:
             self.backends = []
 
+    def __init__(self, configuration):
+        """
+
+        :param configuration: Type API.Configuration
+        :return:
+        """
+
+
+
     def set_frontend_config(self, frontend_config):
         """
         Set the configuration of the frontend server
