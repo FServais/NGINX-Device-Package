@@ -12,17 +12,17 @@ class RequestHandler:
 
         self.response = None
 
-    def send(self, method="GET", location="/", payload=None):
-        print("Try to connect at {}".format(self.url(location)))
+    def send(self, method="GET", location="/", url_params=None, payload=None):
+        print("[Request] Try to connect at {}".format(self.url(location)))
         try:
             if method == "GET":
-                self.response = requests.get(self.url(location), payload)
+                self.response = requests.get(self.url(location), params=url_params)
 
             elif method == "PUT":
-                self.response = requests.put(self.url(location), payload)
+                self.response = requests.put(self.url(location), params=url_params, json=payload)
 
             elif method == "POST":
-                self.response = requests.post(self.url(location), payload)
+                self.response = requests.post(self.url(location), params=url_params, json=payload)
 
             elif method == "DELETE":
                 self.response = requests.delete(self.url(location))
@@ -31,7 +31,7 @@ class RequestHandler:
                 self.response = requests.get(self.url(location))
         except Exception as e:
             from utils import logger
-            logger.log("Send to {} failed : {}".format(self.url(location), self.port, e))
+            logger.log("[Request] Send to {} failed : {}".format(self.url(location), self.port, e))
             return 500, e
 
         return self.response.status_code, self.response.text
