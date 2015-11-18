@@ -136,7 +136,7 @@
                                 cardinality="1">
                         <vnsMParam key="address" description="Address" mandatory="false" dType="str" dispLabel="Address"/> <!-- Not mandatory, default : *, example: *:80 -->
                         <vnsMParam key="port" description="Port" mandatory="false" dType="str" dispLabel="Port"/>
-                        <vnsMParam key="isDefault" description="Is the default server" mandatory="false" dType="str" dispLabel="Default" validation="isBoolean"/>
+                        <vnsMParam key="isDefault" description="Is the default server" mandatory="false" dType="str" dispLabel="Default (True/False)" validation="isBoolean"/>
                     </vnsMFolder>
 
                     <!-- Location -->
@@ -150,6 +150,7 @@
 
                         <vnsMParam key="backend_name" description="Name of the backend" mandatory="true" dType="str" dispLabel="Backend name"/>
                         <vnsMParam key="pass_method" description="Pass method (default: proxy_pass)" mandatory="false" dType="str" dispLabel="Pass method" validation="isPassMethod"/>
+                        <vnsMParam key="https" description="Is the protocol HTTPS ?" mandatory="false" dType="str" dispLabel="HTTPS (True/False)" validation="isBoolean"/>
                     </vnsMFolder>
 
                     <vnsMParam key="frontend_name" description="Name of the frontend server" dispLabel="Frontend name" dType="str" mandatory="false"/>
