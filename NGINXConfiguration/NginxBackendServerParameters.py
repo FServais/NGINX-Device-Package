@@ -2,6 +2,7 @@ __author__ = 'Fabrice Servais'
 
 
 class NginxBackendServerParameters:
+
     def __init__(self, backup=False, down=False, fail_timeout=-1, max_fails=-1, weight=-1):
         """
         Constructor. See details of the parameters: http://nginx.org/en/docs/http/ngx_http_upstream_module.html#server

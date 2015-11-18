@@ -27,6 +27,22 @@ class NginxBackend:
         else:
             self.server_pool = []
 
+    @classmethod
+    def from_configuration(cls, configuration):
+        method = cls.__DEFAULT_LB_ALGORITHM
+        name = "backend"
+        server_pool = []
+
+        for config in configuration:
+            if config.get_key() == "upstreamName":
+                name = config.get_value()
+            elif config.get_key() == "lbalgo":
+                method = config.get_value()
+            elif config.get_key() == "server":
+                server_pool.append(NginxBackendServer.from_configuration(config.get_value()))
+
+        return NginxBackend(method, name, server_pool)
+
     def add_backend_server(self, backend_server):
         """
         Add a backend server
