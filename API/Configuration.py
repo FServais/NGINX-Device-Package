@@ -25,7 +25,7 @@ class Configuration:
             self.connector = v.get('connector', None)
             self.value = v.get('value', None)
             if self.value is not None and type(self.value) is dict:
-                self.value = Configuration(self.value)
+                self.value = [Configuration({k: v}) for k, v in self.value.items()]
 
             self.target = v.get('target', "")
             self.device = v.get('device', None)
@@ -41,6 +41,18 @@ class Configuration:
 
     def __repr__(self):
         return str(self)
+
+    def get_type(self):
+        return self.type
+
+    def get_key(self):
+        return self.key
+
+    def get_name(self):
+        return self.name
+
+    def get_value(self):
+        return self.value
 
 if __name__ == "__main__":
 
@@ -158,4 +170,17 @@ if __name__ == "__main__":
 
     config = Configuration(nginxServiceAuditConfig)
 
-    print(config)
+    print(config.get_value())
+
+    config2 = Configuration({(4, 'listen', 'listen'): {'ackedstate': 0,
+                           'state': 1,
+                           'transaction': 0,
+                           'value': {(5, 'address', 'address'): {'ackedstate': 0,
+                                                                 'state': 1,
+                                                                 'transaction': 0,
+                                                                 'value': '127.0.0.1'},
+                                     (5, 'port', 'port'): {'ackedstate': 0,
+                                                           'state': 1,
+                                                           'transaction': 0,
+                                                           'value': '80'}}}})
+    print(config2.get_value())
