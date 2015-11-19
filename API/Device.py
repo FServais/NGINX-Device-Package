@@ -60,7 +60,18 @@ if __name__ == "__main__":
                  'vdevs': [{'ctxName': 'cokectx1', 'id': 9597, 'tenant': 'coke'}],
                  'virtual': True}
 
-    device2 = {'creds': {'username': 'fservais', 'password': '***REMOVED***'}, 'host': '10.9.14.73', 'port': 80, 'virtual': True}
+    nginxDevice = {'creds': {'password': '<hidden>', 'username': 'fservais'},
+                     'devs': {'NginxDevice_Device_1': {'creds': {'password': '<hidden>',
+                                                                 'username': 'fservais'},
+                                                       'host': '10.9.14.73',
+                                                       'port': 80,
+                                                       'virtual': True}},
+                     'host': '10.9.14.73',
+                     'name': 'NginxDevice',
+                     'port': 80,
+                     'virtual': True}
+
+    device2 = {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '10.9.14.73', 'port': 80, 'virtual': True}
     d = Device(device)
     d2 = Device(device2)
     print(d2.virtual)
