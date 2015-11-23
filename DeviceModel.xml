@@ -12,7 +12,7 @@
             <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="9"
+                          minorversion="11"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -184,26 +184,27 @@
                 <!--<vnsMFeature name="Server" dispOrder="0"/>-->
 
                 <!-- Folders -->
-                <vnsMFolder key="upstreamCfg"
-                        description="backend"
-                        dispLabel="backend"
-                        cardinality="n">
-                    <vnsMRel dispLabel="Select backend" key="upstreamRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-upstream"/>
-                    </vnsMRel>
-                </vnsMFolder>
-
-                <vnsMFolder key="frontendServerCfg"
-                            description="Front-end server"
-                            dispLabel="Front-end server">
-                    <vnsMRel dispLabel="Select front-end server" key="frontendServerRel">
-                        <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-frontendServer"/>
-                    </vnsMRel>
-                </vnsMFolder>
-
-                <vnsMFolder key="configurationParams" description="Configuration parameters" dispLabel="Configuration parameters" cardinality="1">
+                <vnsMFolder key="configuration" description="Configuration" cardinality="n" dispLabel="Configuration">
                     <vnsMParam key="name" description="Name of the configuration" dispLabel="Configuration name" dType="str" mandatory="false"/>
                     <vnsMParam key="enabled" description="Enable or not the configuration (True/False)" dispLabel="Enable the configuration (True/False)" dType="str" mandatory="false" validation="isBoolean"/>
+
+                    <vnsMFolder key="upstreamCfg"
+                            description="backend"
+                            dispLabel="backend"
+                            cardinality="n">
+                        <vnsMRel dispLabel="Select backend" key="upstreamRel">
+                            <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-upstream"/>
+                        </vnsMRel>
+                    </vnsMFolder>
+
+                    <vnsMFolder key="frontendServerCfg"
+                                description="Front-end server"
+                                dispLabel="Front-end server">
+                        <vnsMRel dispLabel="Select front-end server" key="frontendServerRel">
+                            <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-frontendServer"/>
+                        </vnsMRel>
+                    </vnsMFolder>
+
                 </vnsMFolder>
 
             </vnsMFunc>
@@ -246,22 +247,20 @@
                         </vnsAbsDevCfg>
 
                         <vnsAbsFuncCfg>
-
-                            <vnsAbsFolder key="upstreamCfg" name="upstreamCfg">
-                                <vnsAbsCfgRel name="upstreamRel" key="upstreamRel" targetName="upstream"/>
-                            </vnsAbsFolder>
-
-                            <vnsAbsFolder key="frontendServerCfg" name="frontendServerCfg">
-                                <vnsAbsCfgRel name="frontendServerRel" key="frontendServerRel" targetName="frontendServer"/>
-                            </vnsAbsFolder>
-
-                            <vnsAbsFolder key="configurationParams" name="configurationParams">
+                            <vnsAbsFolder key="configuration" name="Configuration">
                                 <vnsAbsParam name="name" key="name" value="default"/>
                                 <vnsAbsParam name="enabled" key="enabled" value="True"/>
+
+                                <vnsAbsFolder key="upstreamCfg" name="upstreamCfg">
+                                    <vnsAbsCfgRel name="upstreamRel" key="upstreamRel" targetName="upstream"/>
+                                </vnsAbsFolder>
+
+                                <vnsAbsFolder key="frontendServerCfg" name="frontendServerCfg">
+                                    <vnsAbsCfgRel name="frontendServerRel" key="frontendServerRel" targetName="frontendServer"/>
+                                </vnsAbsFolder>
+
                             </vnsAbsFolder>
-
                         </vnsAbsFuncCfg>
-
 
                     </vnsAbsFuncProf>
                 </vnsAbsFuncProfGrp>
