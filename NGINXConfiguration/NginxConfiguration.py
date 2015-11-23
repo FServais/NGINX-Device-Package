@@ -10,7 +10,7 @@ __author__ = 'Fabrice Servais'
 
 class NginxConfiguration:
 
-    def __init__(self, frontend=None, backends=None):
+    def __init__(self, frontend=None, backends=None, name="default", enabled=True):
         """
         Constructor.
         :param frontend: Type: NginxFrontend, Frontend
@@ -27,6 +27,9 @@ class NginxConfiguration:
         else:
             self.backends = []
 
+        self.name = name
+        self.enabled = enabled
+
     @classmethod
     def from_configuration(cls, configuration):
         """
@@ -38,6 +41,8 @@ class NginxConfiguration:
         if type(configuration) is list:
             front = None
             backends = []
+            name = "default"
+            enabled = True
 
             for config in configuration:
                 if config.get_type() == 4:
@@ -45,8 +50,19 @@ class NginxConfiguration:
                         front = NginxFrontend.from_configuration(config.get_value())
                     elif config.get_key() == "upstream":
                         backends.append(NginxBackend.from_configuration(config.get_value()))
+                    elif config.get_key() == "configurationParams":
+                        # [(5, "name", ..) -> {}, (5, "enabled", ..) -> {}]
+                        params = config.get_value()
 
-            return NginxConfiguration(front, backends)
+                        for param in params:
+                            if param.get_key() == "name":
+                                name = param.get_value()
+                            elif param.get_key() == "enabled":
+                                en = param.get_value()
+                                if en is not None:
+                                    enabled = en.lower() == "true"
+
+            return NginxConfiguration(front, backends, name, enabled)
 
         elif configuration.get_type() == 0:
             return NginxConfiguration.from_configuration(configuration.get_value())
@@ -75,7 +91,7 @@ class NginxConfiguration:
         self.backends.extend(backends)
 
     def __str__(self):
-        return "{}".format({'http': {'frontend': self.frontend, 'backends': self.backends}})
+        return "{}".format({'cfgParameters': {'name': self.name, 'enabled': self.enabled}, 'http': {'frontend': self.frontend, 'backends': self.backends}})
 
     def __repr__(self):
         return str(self)
@@ -207,6 +223,17 @@ if __name__ == "__main__":
                                                                                                          'state': 1,
                                                                                                          'transaction': 0,
                                                                                                          'value': 'backend'}}},
+                           (4, 'configurationParams', 'configurationParams'): {'ackedstate': 0,
+                                                         'state': 1,
+                                                         'transaction': 0,
+                                                         'value': {(5, 'name', 'name'): {'ackedstate': 0,
+                                                                                           'state': 1,
+                                                                                           'transaction': 0,
+                                                                                           'value': "default"},
+                                                                   (5, 'enabled', 'enabled'): {'ackedstate': 0,
+                                                                                           'state': 1,
+                                                                                           'transaction': 0,
+                                                                                           'value': "True"}}},
                            (7, '', '2162688_32774'): {'ackedstate': 0,
                                                       'state': 1,
                                                       'tag': 2077,
