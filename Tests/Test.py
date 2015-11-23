@@ -1,132 +1,12 @@
+# ===== Service modify
+# Arguments
 from API.Configuration import Configuration
-from NGINXConfiguration.NginxBackend import NginxBackend
-from NGINXConfiguration.NginxBackendServer import NginxBackendServer
-from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
-from NGINXConfiguration.NginxFrontend import NginxFrontend
-from NGINXConfiguration.NginxServerLocation import NginxServerLocation
+from API.Device import Device
+from NGINXConfiguration.NginxConfiguration import NginxConfiguration
+from NginxDevice import NginxDevice
 
-__author__ = 'Fabrice Servais'
-
-
-class NginxConfiguration:
-
-    def __init__(self, frontend=None, backends=None, name="default", enabled=True):
-        """
-        Constructor.
-        :param frontend: Type: NginxFrontend, Frontend
-        :param backends: Type: NginxBackend or List<NginxBackend>, Backend(s)
-        :return:
-        """
-        self.frontend = frontend
-
-        if backends is not None:
-            if type(backends) is not list:
-                self.backends = [backends]
-            else:
-                self.backends = backends
-        else:
-            self.backends = []
-
-        self.name = name
-        self.enabled = enabled
-
-    @classmethod
-    def from_configuration(cls, configuration):
-        """
-
-        :param configuration: Type API.Configuration or list<API.Configuration>
-        :return:
-        """
-
-        if type(configuration) is list:
-            front = None
-            backends = []
-            name = "default"
-            enabled = True
-
-            for config in configuration:
-                if config.get_type() == 4:
-                    if config.get_key() == "frontendServer":
-                        front = NginxFrontend.from_configuration(config.get_value())
-                    elif config.get_key() == "upstream":
-                        backends.append(NginxBackend.from_configuration(config.get_value()))
-                    elif config.get_key() == "configurationParams":
-                        # [(5, "name", ..) -> {}, (5, "enabled", ..) -> {}]
-                        params = config.get_value()
-
-                        for param in params:
-                            if param.get_key() == "name":
-                                name = param.get_value()
-                            elif param.get_key() == "enabled":
-                                en = param.get_value()
-                                if en is not None:
-                                    enabled = en.lower() == "true"
-
-            return NginxConfiguration(front, backends, name, enabled)
-
-        elif configuration.get_type() == 0:
-            return NginxConfiguration.from_configuration(configuration.get_value())
-
-        print(configuration)
-        return None
-
-
-    def set_frontend_config(self, frontend_config):
-        """
-        Set the configuration of the frontend server
-        :param frontend_config: Type: NginxFrontend, configuration of the frontend
-        """
-        self.frontend = frontend_config
-
-    def add_backend(self, backend):
-        """Add a 'backend' block, i.e. a backend pool
-        :param backend: Type: NginxBackend, backend (= 'upstream')
-        """
-        self.backends.append(backend)
-
-    def add_backends(self, backends):
-        """Add a list of 'backends' blocks, i.e. a backend pool
-        :param backends: Type: List<NginxBackend>, backends (= 'upstream')
-        """
-        self.backends.extend(backends)
-
-    def __str__(self):
-        return "{}".format({'cfgParameters': {'name': self.name, 'enabled': self.enabled}, 'http': {'frontend': self.frontend, 'backends': self.backends}})
-
-    def __repr__(self):
-        return str(self)
-
-    def export(self):
-        """
-        Generate the String containing the corresponding configuration for NGINX.
-        :return: String of the configuration, usable by NGINX.
-        """
-        front = [str(self.frontend.export())] if self.frontend is not None else []
-        back = [str(backend.export()) for backend in self.backends]
-
-        content = front + back
-
-        return '\n'.join(content)
-
-
-if __name__ == "__main__":
-    loc = NginxServerLocation("backend", '/')
-    frontend = NginxFrontend()
-    frontend.add_location(loc)
-
-    back1 = NginxBackend()
-    b_serv1 = NginxBackendServer(address="127.0.0.1", port=80)
-    b_serv1.set_parameters(NginxBackendServerParameters(backup=True, max_fails=3, weight=3))
-    back1.add_backend_server(b_serv1)
-
-    config = NginxConfiguration(frontend=frontend, backends=back1)
-
-    print(config)
-    print(config.export())
-
-    print("------------------------------------")
-
-    nginxServiceAuditConfig = {(0, '', 5167): {'ackedstate': 0,
+device = {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 5000, 'virtual': True}
+configuration = {(0, '', 5167): {'ackedstate': 0,
                  'ctxName': 'VRF_NG',
                  'dn': u'uni/vDev-[uni/tn-NGINX/lDevVip-NginxDevice]-tn-[uni/tn-NGINX]-ctx-VRF_NG',
                  'state': 1,
@@ -249,6 +129,26 @@ if __name__ == "__main__":
                                                          'state': 1,
                                                          'transaction': 0}}}}
 
-    config_api = Configuration(nginxServiceAuditConfig)
-    nginx_config = NginxConfiguration.from_configuration(config_api)
-    print(nginx_config.export())
+# Convert configuration into API object
+api_config = Configuration(configuration)
+
+# Create NginxDevice
+nginx_device = NginxDevice(device)
+
+# Convert configuration into NGINX objects
+nginx_configuration = NginxConfiguration.from_configuration(api_config)
+
+# Generate (nginx) string of the configuration
+string_config_file = nginx_configuration.export()
+
+# Get the list of existing configurations
+status, sites = nginx_device.get_site_list(all_available_sites=True)
+
+if status:
+    # Push
+    if nginx_configuration.name in sites:
+        print("Update '{}'".format(nginx_configuration.name))
+        nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+    else:
+        print("Add '{}'".format(nginx_configuration.name))
+        nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)

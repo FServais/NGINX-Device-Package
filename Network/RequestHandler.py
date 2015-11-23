@@ -14,6 +14,7 @@ class RequestHandler:
 
     def send(self, method="GET", location="/", url_params=None, payload=None):
         print("[Request] Try to connect at {}".format(self.url(location)))
+
         try:
             if method == "GET":
                 self.response = requests.get(self.url(location), params=url_params)
@@ -34,7 +35,7 @@ class RequestHandler:
             logger.log("[Request] Send to {} failed : {}".format(self.url(location), self.port, e))
             return 500, e
 
-        return self.response.status_code, self.response.text
+        return self.response.status_code, self.response.json()
 
     def url(self, location):
         return "http://{}:{}{}".format(self.address, self.port, location)

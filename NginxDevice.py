@@ -18,13 +18,21 @@ class NginxDevice(Device):
         return status == 200
 
     def get_site_list(self, all_available_sites=False):
-        return self.request_handler.send("GET", self.__URI_SITE, url_params={'allAvailable':all_available_sites})
+        status, message = self.request_handler.send("GET", self.__URI_SITE, url_params={'allAvailable':all_available_sites})
+
+        if status != 200:
+            return (False, [])
+        print(message)
+        return (True, [str(site) for site in message['sites']])
 
     def get_site_config(self, site_name):
         return self.request_handler.send("GET", self.__URI_SITE + '/' + site_name)
 
-    def create_site_config(self, site_name, config):
-        return self.request_handler.send("POST", self.__URI_SITE + '/' + site_name, payload={'config': config})
+    def create_site_config(self, site_name, config, enable=True):
+        return self.request_handler.send("POST", self.__URI_SITE + '/' + site_name, payload={'config': config, 'enable': enable})
+
+    def update_site_config(self, site_name, config, enable=True):
+        return self.request_handler.send("PUT", self.__URI_SITE + '/' + site_name, payload={'config': config, 'enable': enable})
 
 if __name__ == "__main__":
     device = {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 5000, 'virtual': True}
@@ -35,20 +43,20 @@ if __name__ == "__main__":
 
     status, message = nginx_device.get_site_list(all_available_sites=None)
     print("Status: {}".format(status))
-    print(message)
+    print("Message: {}".format(message))
 
-    status, message = nginx_device.get_site_config("default")
-    print("Status: {}".format(status))
-    print(message)
-
-    status, message = nginx_device.create_site_config("test_site", "test-config3")
-    print("Status: {}".format(status))
-    print(message)
-
-    status, message = nginx_device.get_site_list(all_available_sites=True)
-    print("Status: {}".format(status))
-    print(message)
-
-    status, message = nginx_device.get_site_config("test_site")
-    print("Status: {}".format(status))
-    print(message)
+    # status, message = nginx_device.get_site_config("default")
+    # print("Status: {}".format(status))
+    # print(message)
+    #
+    # status, message = nginx_device.create_site_config("test_site", "test-config3")
+    # print("Status: {}".format(status))
+    # print(message)
+    #
+    # status, message = nginx_device.get_site_list(all_available_sites=True)
+    # print("Status: {}".format(status))
+    # print(message)
+    #
+    # status, message = nginx_device.get_site_config("test_site")
+    # print("Status: {}".format(status))
+    # print(message)
