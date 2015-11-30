@@ -12,7 +12,7 @@
             <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="11"
+                          minorversion="12"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -199,7 +199,8 @@
 
                     <vnsMFolder key="frontendServerCfg"
                                 description="Front-end server"
-                                dispLabel="Front-end server">
+                                dispLabel="Front-end server"
+                                cardinality="n">
                         <vnsMRel dispLabel="Select front-end server" key="frontendServerRel">
                             <vnsRsTarget tDn="uni/infra/mDev-nginx-nginx-1.0/mDevCfg/mFolder-frontendServer"/>
                         </vnsMRel>

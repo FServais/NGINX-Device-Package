@@ -78,6 +78,31 @@ configuration = {(0, '', 5167): {'ackedstate': 0,
                                                                                                                                                                                              'state': 1,
                                                                                                                                                                                              'transaction': 0,
                                                                                                                                                                                              'value': '/'}}}}},
+                                                                             (4, 'frontendServer', 'frontendServer2'): {'ackedstate': 0,
+                                                                                                                       'state': 1,
+                                                                                                                       'transaction': 0,
+                                                                                                                       'value': {(4, 'listen', 'listen'): {'ackedstate': 0,
+                                                                                                                                                           'state': 1,
+                                                                                                                                                           'transaction': 0,
+                                                                                                                                                           'value': {(5, 'address', 'address'): {'ackedstate': 0,
+                                                                                                                                                                                                 'state': 1,
+                                                                                                                                                                                                 'transaction': 0,
+                                                                                                                                                                                                 'value': '127.0.0.2'},
+                                                                                                                                                                     (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                                                                                           'state': 1,
+                                                                                                                                                                                           'transaction': 0,
+                                                                                                                                                                                           'value': '80003'}}},
+                                                                                                                                 (4, 'location', 'location'): {'ackedstate': 0,
+                                                                                                                                                               'state': 1,
+                                                                                                                                                               'transaction': 0,
+                                                                                                                                                               'value': {(5, 'backend_name', 'backend_name'): {'ackedstate': 0,
+                                                                                                                                                                                                               'state': 1,
+                                                                                                                                                                                                               'transaction': 0,
+                                                                                                                                                                                                               'value': 'backend'},
+                                                                                                                                                                         (5, 'uri', 'uri'): {'ackedstate': 0,
+                                                                                                                                                                                             'state': 1,
+                                                                                                                                                                                             'transaction': 0,
+                                                                                                                                                                                             'value': '/'}}}}},
                                                                              (4, 'upstream', 'upstream'): {'ackedstate': 0,
                                                                                                            'state': 1,
                                                                                                            'transaction': 0,
@@ -140,6 +165,7 @@ nginx_device = NginxDevice(device)
 nginx_configurations = NginxConfiguration.from_configurations(api_config)
 
 for nginx_configuration in nginx_configurations:
+    print(nginx_configuration)
     # Generate (nginx) string of the configuration
     # string_config_file = nginx_configuration.export()
     string_config_file = nginx_configuration.visit(file_exporter())

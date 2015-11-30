@@ -22,10 +22,10 @@ def file_exporter():
         __DEFAULT_LB_ALGORITHM = "round-robin"
 
         if isinstance(node, NginxConfiguration):
-            front = [str(node.frontend.visit(file_exporter()))] if node.frontend is not None else []
-            back = [str(backend.visit(file_exporter())) for backend in node.backends]
+            fronts = [str(frontend.export()) for frontend in node.frontends]
+            back = [str(backend.export()) for backend in node.backends]
 
-            content = front + back
+            content = fronts + back
 
             return '\n'.join(content)
 
