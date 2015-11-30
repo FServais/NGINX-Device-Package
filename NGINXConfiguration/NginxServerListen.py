@@ -43,6 +43,9 @@ class NginxServerListen:
 
         return Directive(self.__LISTEN_DIRECTIVE__NAME, param)
 
+    def visit(self, visitor):
+        return visitor(self)
+
 if __name__ == "__main__":
     listen = NginxServerListen(address="127.0.0.1", port=8001)
     print(listen.export())

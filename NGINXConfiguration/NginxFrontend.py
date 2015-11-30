@@ -63,12 +63,14 @@ class NginxFrontend:
         from NginxExportConfiguration.Block import Block
         block = Block(self.__SERVER_BLOCK__NAME)
 
-        from NginxExportConfiguration.Directive import Directive
         block.add_lines(self.listen.export())
         for location in self.locations:
             block.add_lines(location.export())
 
         return block
+
+    def visit(self, visitor):
+        return visitor(self)
 
 
 if __name__ == "__main__":

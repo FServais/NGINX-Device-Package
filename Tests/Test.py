@@ -2,6 +2,7 @@
 # Arguments
 from API.Configuration import Configuration
 from API.Device import Device
+from Exporter.FileExporter import file_exporter
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
 
@@ -49,71 +50,71 @@ configuration = {(0, '', 5167): {'ackedstate': 0,
                                                                                                                                                                               'state': 1,
                                                                                                                                                                               'target': 'upstream',
                                                                                                                                                                               'transaction': 0}}}}}}},
-                           (4, 'frontendServer', 'frontendServer'): {'ackedstate': 0,
-                                                                     'state': 1,
-                                                                     'transaction': 0,
-                                                                     'value': {(4, 'listen', 'listen'): {'ackedstate': 0,
-                                                                                                         'state': 1,
-                                                                                                         'transaction': 0,
-                                                                                                         'value': {(5, 'address', 'address'): {'ackedstate': 0,
-                                                                                                                                               'state': 1,
-                                                                                                                                               'transaction': 0,
-                                                                                                                                               'value': '127.0.0.1'},
-                                                                                                                   (5, 'port', 'port'): {'ackedstate': 0,
-                                                                                                                                         'state': 1,
-                                                                                                                                         'transaction': 0,
-                                                                                                                                         'value': '80'}}},
-                                                                               (4, 'location', 'location'): {'ackedstate': 0,
-                                                                                                             'state': 1,
-                                                                                                             'transaction': 0,
-                                                                                                             'value': {(5, 'backend_name', 'backend_name'): {'ackedstate': 0,
-                                                                                                                                                             'state': 1,
-                                                                                                                                                             'transaction': 0,
-                                                                                                                                                             'value': 'backend'},
-                                                                                                                       (5, 'uri', 'uri'): {'ackedstate': 0,
-                                                                                                                                           'state': 1,
-                                                                                                                                           'transaction': 0,
-                                                                                                                                           'value': '/'}}}}},
-                           (4, 'upstream', 'upstream'): {'ackedstate': 0,
-                                                         'state': 1,
-                                                         'transaction': 0,
-                                                         'value': {(4, 'server', 'web1'): {'ackedstate': 0,
-                                                                                           'state': 1,
-                                                                                           'transaction': 0,
-                                                                                           'value': {(5, 'ip', 'ip'): {'ackedstate': 0,
+                           (4, 'configuration', 'Configuration'): {'ackedstate': 0,
+                                                                   'state': 1,
+                                                                   'transaction': 0,
+                                                                   'value': {(4, 'frontendServer', 'frontendServer'): {'ackedstate': 0,
                                                                                                                        'state': 1,
                                                                                                                        'transaction': 0,
-                                                                                                                       'value': '127.0.0.1'},
-                                                                                                     (5, 'port', 'port'): {'ackedstate': 0,
-                                                                                                                           'state': 1,
-                                                                                                                           'transaction': 0,
-                                                                                                                           'value': '8001'}}},
-                                                                   (4, 'server', 'web2'): {'ackedstate': 0,
-                                                                                           'state': 1,
-                                                                                           'transaction': 0,
-                                                                                           'value': {(5, 'ip', 'ip'): {'ackedstate': 0,
-                                                                                                                       'state': 1,
-                                                                                                                       'transaction': 0,
-                                                                                                                       'value': '127.0.0.1'},
-                                                                                                     (5, 'port', 'port'): {'ackedstate': 0,
-                                                                                                                           'state': 1,
-                                                                                                                           'transaction': 0,
-                                                                                                                           'value': '8002'}}},
-                                                                   (5, 'upstreamName', 'upstreamName'): {'ackedstate': 0,
+                                                                                                                       'value': {(4, 'listen', 'listen'): {'ackedstate': 0,
+                                                                                                                                                           'state': 1,
+                                                                                                                                                           'transaction': 0,
+                                                                                                                                                           'value': {(5, 'address', 'address'): {'ackedstate': 0,
+                                                                                                                                                                                                 'state': 1,
+                                                                                                                                                                                                 'transaction': 0,
+                                                                                                                                                                                                 'value': '127.0.0.1'},
+                                                                                                                                                                     (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                                                                                           'state': 1,
+                                                                                                                                                                                           'transaction': 0,
+                                                                                                                                                                                           'value': '80'}}},
+                                                                                                                                 (4, 'location', 'location'): {'ackedstate': 0,
+                                                                                                                                                               'state': 1,
+                                                                                                                                                               'transaction': 0,
+                                                                                                                                                               'value': {(5, 'backend_name', 'backend_name'): {'ackedstate': 0,
+                                                                                                                                                                                                               'state': 1,
+                                                                                                                                                                                                               'transaction': 0,
+                                                                                                                                                                                                               'value': 'backend'},
+                                                                                                                                                                         (5, 'uri', 'uri'): {'ackedstate': 0,
+                                                                                                                                                                                             'state': 1,
+                                                                                                                                                                                             'transaction': 0,
+                                                                                                                                                                                             'value': '/'}}}}},
+                                                                             (4, 'upstream', 'upstream'): {'ackedstate': 0,
+                                                                                                           'state': 1,
+                                                                                                           'transaction': 0,
+                                                                                                           'value': {(4, 'server', 'web1'): {'ackedstate': 0,
+                                                                                                                                             'state': 1,
+                                                                                                                                             'transaction': 0,
+                                                                                                                                             'value': {(5, 'ip', 'ip'): {'ackedstate': 0,
+                                                                                                                                                                         'state': 1,
+                                                                                                                                                                         'transaction': 0,
+                                                                                                                                                                         'value': '127.0.0.1'},
+                                                                                                                                                       (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                                                                             'state': 1,
+                                                                                                                                                                             'transaction': 0,
+                                                                                                                                                                             'value': '8001'}}},
+                                                                                                                     (4, 'server', 'web2'): {'ackedstate': 0,
+                                                                                                                                             'state': 1,
+                                                                                                                                             'transaction': 0,
+                                                                                                                                             'value': {(5, 'ip', 'ip'): {'ackedstate': 0,
+                                                                                                                                                                         'state': 1,
+                                                                                                                                                                         'transaction': 0,
+                                                                                                                                                                         'value': '127.0.0.1'},
+                                                                                                                                                       (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                                                                             'state': 1,
+                                                                                                                                                                             'transaction': 0,
+                                                                                                                                                                             'value': '8002'}}},
+                                                                                                                     (5, 'upstreamName', 'upstreamName'): {'ackedstate': 0,
+                                                                                                                                                           'state': 1,
+                                                                                                                                                           'transaction': 0,
+                                                                                                                                                           'value': 'backend'}}},
+                                                                             (5, 'enabled', 'enabled'): {'ackedstate': 0,
                                                                                                          'state': 1,
                                                                                                          'transaction': 0,
-                                                                                                         'value': 'backend'}}},
-                           (4, 'configurationParams', 'configurationParams'): {'ackedstate': 0,
-                                                         'state': 1,
-                                                         'transaction': 0,
-                                                         'value': {(5, 'name', 'name'): {'ackedstate': 0,
-                                                                                           'state': 1,
-                                                                                           'transaction': 0,
-                                                                                           'value': "default"},
-                                                                   (5, 'enabled', 'enabled'): {'ackedstate': 0,
-                                                                                           'state': 1,
-                                                                                           'transaction': 0,
-                                                                                           'value': "True"}}},
+                                                                                                         'value': 'True'},
+                                                                             (5, 'name', 'name'): {'ackedstate': 0,
+                                                                                                   'state': 1,
+                                                                                                   'transaction': 0,
+                                                                                                   'value': 'default'}}},
                            (7, '', '2162688_32774'): {'ackedstate': 0,
                                                       'state': 1,
                                                       'tag': 2077,
@@ -136,19 +137,22 @@ api_config = Configuration(configuration)
 nginx_device = NginxDevice(device)
 
 # Convert configuration into NGINX objects
-nginx_configuration = NginxConfiguration.from_configuration(api_config)
+nginx_configurations = NginxConfiguration.from_configurations(api_config)
 
-# Generate (nginx) string of the configuration
-string_config_file = nginx_configuration.export()
+for nginx_configuration in nginx_configurations:
+    # Generate (nginx) string of the configuration
+    # string_config_file = nginx_configuration.export()
+    string_config_file = nginx_configuration.visit(file_exporter())
+    print(string_config_file)
 
-# Get the list of existing configurations
-status, sites = nginx_device.get_site_list(all_available_sites=True)
-
-if status:
-    # Push
-    if nginx_configuration.name in sites:
-        print("Update '{}'".format(nginx_configuration.name))
-        nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
-    else:
-        print("Add '{}'".format(nginx_configuration.name))
-        nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+    # # Get the list of existing configurations
+    # status, sites = nginx_device.get_site_list(all_available_sites=True)
+    #
+    # if status:
+    #     # Push
+    #     if nginx_configuration.name in sites:
+    #         print("Update '{}'".format(nginx_configuration.name))
+    #         nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+    #     else:
+    #         print("Add '{}'".format(nginx_configuration.name))
+    #         nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)

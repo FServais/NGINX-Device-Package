@@ -73,6 +73,8 @@ class NginxBackend:
         lines.extend([server.export() for server in self.server_pool])
         return Block(self.__UPSTREAM_BLOCK_NAME, self.name, lines)
 
+    def visit(self, visitor):
+        return visitor(self)
 
 if __name__ == "__main__":
     backend = NginxBackend(method="ip-hash")

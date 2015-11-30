@@ -1,9 +1,6 @@
 from API.Configuration import Configuration
 from NGINXConfiguration.NginxBackend import NginxBackend
-from NGINXConfiguration.NginxBackendServer import NginxBackendServer
-from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
 from NGINXConfiguration.NginxFrontend import NginxFrontend
-from NGINXConfiguration.NginxServerLocation import NginxServerLocation
 
 __author__ = 'Fabrice Servais'
 
@@ -31,53 +28,56 @@ class NginxConfiguration:
         self.enabled = enabled
 
     @classmethod
+    def from_configurations(cls, configurations):
+        """
+
+        :param configurations: Type list<API.Configuration>
+        :return:
+        """
+        nginx_configurations = []
+        if configurations.get_type() == 0:
+            configs = configurations.get_value()
+
+            for config in configs:
+                if config.get_type() == 4 and config.get_key() == "configuration":
+                    nginx_configurations.append(NginxConfiguration.from_configuration(config.get_value()))
+
+        return nginx_configurations
+
+    @classmethod
     def from_configuration(cls, configuration):
         """
 
         :param configuration: Type API.Configuration or list<API.Configuration>
         :return:
         """
-        if type(configuration) is not list:
-            if configuration.get_type() == 0:
-                configs = configuration.get_value()
-                nginx_configurations = []
-                for config in configs:
-                    if config.get_key() == 4 or config.get_key() == 5:
-                        nginx_configurations.append(NginxConfiguration.from_configuration(config))
+        front = None
+        backends = []
+        name = "default"
+        enabled = True
 
-                return nginx_configurations
+        for config in configuration:
+            if config.get_type() == 4:
 
-        else:
-            front = None
-            backends = []
-            name = "default"
-            enabled = True
+                if config.get_key() == "frontendServer":
+                    front = NginxFrontend.from_configuration(config.get_value())
+                elif config.get_key() == "upstream":
+                    backends.append(NginxBackend.from_configuration(config.get_value()))
 
-            for config in configuration:
-                if config.get_type() == 4:
-                    if config.get_key() == "configuration":
-                        return NginxConfiguration.from_configuration(config.get_value())
+            if config.get_type() == 5:
+                # [(5, "name", ..) -> {}, (5, "enabled", ..) -> {}]
+                if config.get_key() == "name":
+                    name = config.get_value()
+                elif config.get_key() == "enabled":
+                    en = config.get_value()
+                    if en is not None:
+                        enabled = en.lower() == "true"
 
-                    if config.get_key() == "frontendServer":
-                        front = NginxFrontend.from_configuration(config.get_value())
-                    elif config.get_key() == "upstream":
-                        backends.append(NginxBackend.from_configuration(config.get_value()))
-
-                if config.get_type() == 5:
-                    # [(5, "name", ..) -> {}, (5, "enabled", ..) -> {}]
-                    if config.get_key() == "name":
-                        name = config.get_value()
-                    elif config.get_key() == "enabled":
-                        en = config.get_value()
-                        if en is not None:
-                            enabled = en.lower() == "true"
-
-            return NginxConfiguration(front, backends, name, enabled)
+        return NginxConfiguration(front, backends, name, enabled)
 
 
         print(configuration)
         return None
-
 
     def set_frontend_config(self, frontend_config):
         """
@@ -116,8 +116,13 @@ class NginxConfiguration:
 
         return '\n'.join(content)
 
+    def visit(self, visitor):
+        return visitor(self)
+
 
 if __name__ == "__main__":
+    from Exporter.FileExporter import file_exporter
+
     # loc = NginxServerLocation("backend", '/')
     # frontend = NginxFrontend()
     # frontend.add_location(loc)
@@ -258,6 +263,12 @@ if __name__ == "__main__":
                                                          'transaction': 0}}}}
 
     config_api = Configuration(nginxServiceAuditConfig)
-    nginx_config = NginxConfiguration.from_configuration(config_api)
-    print("Configuration '{}' ({}): ".format(nginx_config.name, "Enabled" if nginx_config.enabled else "Disabled"))
-    print(nginx_config.export())
+    nginx_configs = NginxConfiguration.from_configurations(config_api)
+
+    for c in nginx_configs:
+        print("Configuration '{}' ({}): ".format(c.name, "Enabled" if c.enabled else "Disabled"))
+        print(c.export())
+
+        # print("--------------- FILE EXPORTER ----------------------")
+        # Does not work, try with the 'Test.py' file to test the export
+        # print(c.visit(file_exporter()))

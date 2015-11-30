@@ -64,6 +64,8 @@ class NginxServerLocation:
         return Block(self.__LOCATION_BLOCK_NAME, block_parameters, Directive(self.pass_method, "{}://{}".format(
             "https" if self.https else "http", self.backend_name)))
 
+    def visit(self, visitor):
+        return visitor(self)
 
 if __name__ == "__main__":
     location = NginxServerLocation("backend", "/", pass_method="method", modifier="~*")

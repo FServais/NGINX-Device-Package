@@ -61,6 +61,8 @@ class NginxBackendServerParameters:
 
         return to_return
 
+    def visit(self, visitor):
+        return visitor(self)
 
 if __name__ == "__main__":
     params = NginxBackendServerParameters(backup=True, down=False, fail_timeout=4)
