@@ -5,6 +5,7 @@ from API.Device import Device
 from Exporter.FileExporter import file_exporter
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
+from NginxDeviceSSH import NginxDeviceSSH
 
 device = {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 5000, 'virtual': True}
 configuration = {(0, '', 5167): {'ackedstate': 0,
@@ -139,7 +140,7 @@ configuration = {(0, '', 5167): {'ackedstate': 0,
                                                                              (5, 'name', 'name'): {'ackedstate': 0,
                                                                                                    'state': 1,
                                                                                                    'transaction': 0,
-                                                                                                   'value': 'default'}}},
+                                                                                                   'value': 'test_config'}}},
                            (7, '', '2162688_32774'): {'ackedstate': 0,
                                                       'state': 1,
                                                       'tag': 2077,
@@ -159,7 +160,7 @@ configuration = {(0, '', 5167): {'ackedstate': 0,
 api_config = Configuration(configuration)
 
 # Create NginxDevice
-nginx_device = NginxDevice(device)
+nginx_device = NginxDeviceSSH(device)
 
 # Convert configuration into NGINX objects
 nginx_configurations = NginxConfiguration.from_configurations(api_config)
@@ -170,6 +171,8 @@ for nginx_configuration in nginx_configurations:
     # string_config_file = nginx_configuration.export()
     string_config_file = nginx_configuration.visit(file_exporter())
     print(string_config_file)
+
+    # Using the Agent
 
     # # Get the list of existing configurations
     # status, sites = nginx_device.get_site_list(all_available_sites=True)
@@ -182,3 +185,20 @@ for nginx_configuration in nginx_configurations:
     #     else:
     #         print("Add '{}'".format(nginx_configuration.name))
     #         nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+
+    # Using SSH
+
+    connection_status = nginx_device.connect()
+
+    if connection_status:
+        # Get the list of existing configurations
+        status, sites = nginx_device.get_site_list(all_available_sites=True)
+
+        if status:
+            # Push
+            if nginx_configuration.name in sites:
+                print("Update '{}'".format(nginx_configuration.name))
+                nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+            else:
+                print("Add '{}'".format(nginx_configuration.name))
+                nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
