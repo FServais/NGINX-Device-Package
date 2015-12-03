@@ -3,3 +3,4 @@
 Doc/Questions.html
 Doc/Questions.md
 *.pyc
+NginxDeviceSSH.py
