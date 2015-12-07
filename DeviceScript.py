@@ -3,6 +3,10 @@
 
 import os
 import sys
+
+from Exporter.FileExporter import file_exporter
+from NGINXConfiguration.NginxConfiguration import NginxConfiguration
+from NginxDevice import NginxDevice
 from utils import logger
 from API.ReturnValue import ReturnValue
 from API.Configuration import Configuration
@@ -62,6 +66,34 @@ def serviceAudit(device, configuration):
 
 def serviceModify(device, configuration):
     logger.log("\n---- serviceModify with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
+
+    # Convert configuration into API object
+    api_config = Configuration(configuration)
+
+    # Create NginxDevice
+    nginx_device = NginxDevice(device)
+
+    # Convert configuration into NGINX objects
+    nginx_configurations = NginxConfiguration.from_configurations(api_config)
+
+    for nginx_configuration in nginx_configurations:
+
+        # Generate (nginx) string of the configuration
+        string_config_file = nginx_configuration.visit(file_exporter())
+
+        # Get the list of existing configurations
+        status, sites = nginx_device.get_site_list(all_available_sites=True)
+
+        if status:
+            # Push
+            if nginx_configuration.name in sites:
+                print("Update '{}'".format(nginx_configuration.name))
+                nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+            else:
+                print("Add '{}'".format(nginx_configuration.name))
+                nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+
+
     return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
 
 
