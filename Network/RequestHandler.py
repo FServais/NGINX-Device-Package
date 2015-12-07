@@ -20,19 +20,19 @@ class RequestHandler:
 
         try:
             if method == "GET":
-                self.response = requests.get(self.url(location), params=url_params, auth=(self.username, self.password))
+                self.response = requests.get(self.url(location), params=url_params, auth=(self.username, self.password), verify=False)
 
             elif method == "PUT":
-                self.response = requests.put(self.url(location), params=url_params, json=payload, auth=(self.username, self.password))
+                self.response = requests.put(self.url(location), params=url_params, json=payload, auth=(self.username, self.password), verify=False)
 
             elif method == "POST":
-                self.response = requests.post(self.url(location), params=url_params, json=payload, auth=(self.username, self.password))
+                self.response = requests.post(self.url(location), params=url_params, json=payload, auth=(self.username, self.password), verify=False)
 
             elif method == "DELETE":
-                self.response = requests.delete(self.url(location), auth=(self.username, self.password))
+                self.response = requests.delete(self.url(location), auth=(self.username, self.password), verify=False)
 
             else:
-                self.response = requests.get(self.url(location), auth=(self.username, self.password))
+                self.response = requests.get(self.url(location), auth=(self.username, self.password), verify=False)
 
             json = self.response.json()
         except Exception as e:
@@ -43,7 +43,7 @@ class RequestHandler:
         return self.response.status_code, json
 
     def url(self, location):
-        return "http://{}:{}{}".format(self.address, self.port, location)
+        return "https://{}:{}{}".format(self.address, self.port, location)
 
 if __name__ == "__main__":
     rh = RequestHandler("127.0.0.1", 5000)
