@@ -1,13 +1,11 @@
 # ===== Service modify
 # Arguments
 from API.Configuration import Configuration
-from API.Device import Device
 from Exporter.FileExporter import file_exporter
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
-from NginxDeviceSSH import NginxDeviceSSH
 
-device = {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 5000, 'virtual': True}
+device = {'creds': {'username': 'root', 'password': '***REMOVED***'}, 'host': '178.62.144.145', 'port': 5000, 'virtual': True}
 configuration = {(0, '', 5167): {'ackedstate': 0,
                  'ctxName': 'VRF_NG',
                  'dn': u'uni/vDev-[uni/tn-NGINX/lDevVip-NginxDevice]-tn-[uni/tn-NGINX]-ctx-VRF_NG',
@@ -92,7 +90,7 @@ configuration = {(0, '', 5167): {'ackedstate': 0,
                                                                                                                                                                      (5, 'port', 'port'): {'ackedstate': 0,
                                                                                                                                                                                            'state': 1,
                                                                                                                                                                                            'transaction': 0,
-                                                                                                                                                                                           'value': '80003'}}},
+                                                                                                                                                                                           'value': '8003'}}},
                                                                                                                                  (4, 'location', 'location'): {'ackedstate': 0,
                                                                                                                                                                'state': 1,
                                                                                                                                                                'transaction': 0,
@@ -160,13 +158,13 @@ configuration = {(0, '', 5167): {'ackedstate': 0,
 api_config = Configuration(configuration)
 
 # Create NginxDevice
-nginx_device = NginxDeviceSSH(device)
+nginx_device = NginxDevice(device)
 
 # Convert configuration into NGINX objects
 nginx_configurations = NginxConfiguration.from_configurations(api_config)
 
 for nginx_configuration in nginx_configurations:
-    print(nginx_configuration)
+
     # Generate (nginx) string of the configuration
     # string_config_file = nginx_configuration.export()
     string_config_file = nginx_configuration.visit(file_exporter())
@@ -174,31 +172,15 @@ for nginx_configuration in nginx_configurations:
 
     # Using the Agent
 
-    # # Get the list of existing configurations
-    # status, sites = nginx_device.get_site_list(all_available_sites=True)
-    #
-    # if status:
-    #     # Push
-    #     if nginx_configuration.name in sites:
-    #         print("Update '{}'".format(nginx_configuration.name))
-    #         nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
-    #     else:
-    #         print("Add '{}'".format(nginx_configuration.name))
-    #         nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+    # Get the list of existing configurations
+    status, sites = nginx_device.get_site_list(all_available_sites=True)
+    print(sites)
 
-    # Using SSH
-
-    connection_status = nginx_device.connect()
-
-    if connection_status:
-        # Get the list of existing configurations
-        status, sites = nginx_device.get_site_list(all_available_sites=True)
-
-        if status:
-            # Push
-            if nginx_configuration.name in sites:
-                print("Update '{}'".format(nginx_configuration.name))
-                nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
-            else:
-                print("Add '{}'".format(nginx_configuration.name))
-                nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+    if status:
+        # Push
+        if nginx_configuration.name in sites:
+            print("Update '{}'".format(nginx_configuration.name))
+            nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+        else:
+            print("Add '{}'".format(nginx_configuration.name))
+            nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)

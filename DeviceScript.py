@@ -93,7 +93,6 @@ def serviceModify(device, configuration):
                 print("Add '{}'".format(nginx_configuration.name))
                 nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
 
-
     return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
 
 
