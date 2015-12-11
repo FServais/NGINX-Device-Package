@@ -41,25 +41,6 @@ class Device:
 
 
 if __name__ == "__main__":
-    device = {'creds': {'password': '<hidden>', 'username': 'nsroot'},
-                 'devs': {'Generic1': {'creds': {'password': '<hidden>',
-                                                 'username': 'nsroot'},
-                                       'host': '42.42.42.100',
-                                       'port': 80,
-                                       'version': '1.0',
-                                       'virtual': True},
-                          'Generic2': {'creds': {'password': '<hidden>',
-                                                 'username': 'nsroot'},
-                                       'host': '42.42.42.101',
-                                       'port': 80,
-                                       'version': '1.0',
-                                       'virtual': True}},
-                 'host': '42.42.42.99',
-                 'name': 'InsiemeCluster',
-                 'port': 80,
-                 'vdevs': [{'ctxName': 'cokectx1', 'id': 9597, 'tenant': 'coke'}],
-                 'virtual': True}
-
     nginxDevice = {'creds': {'password': '<hidden>', 'username': 'fservais'},
                      'devs': {'NginxDevice_Device_1': {'creds': {'password': '<hidden>',
                                                                  'username': 'fservais'},
@@ -72,6 +53,5 @@ if __name__ == "__main__":
                      'virtual': True}
 
     device2 = {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '10.9.14.73', 'port': 80, 'virtual': True}
-    d = Device(device)
     d2 = Device(device2)
     print(d2.virtual)

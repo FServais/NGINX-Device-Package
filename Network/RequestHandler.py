@@ -1,5 +1,5 @@
 import requests
-from pip._vendor.requests import RequestException
+from utils import logger
 
 __author__ = 'Fabrice Servais'
 
@@ -16,7 +16,7 @@ class RequestHandler:
         self.response = None
 
     def send(self, method="GET", location="/", url_params=None, payload=None):
-        print("[Request] Try to connect at {}".format(self.url(location)))
+        logger.log("[Request] Try to connect at {}".format(self.url(location)))
 
         try:
             if method == "GET":
@@ -35,16 +35,12 @@ class RequestHandler:
                 self.response = requests.get(self.url(location), auth=(self.username, self.password), verify=False)
 
             json = self.response.json()
+
         except Exception as e:
-            from utils import logger
             logger.log("[Request] Send to {} failed : {}".format(self.url(location), e))
-            return 500, e.message
+            return 504, e.message
 
         return self.response.status_code, json
 
     def url(self, location):
         return "https://{}:{}{}".format(self.address, self.port, location)
-
-if __name__ == "__main__":
-    rh = RequestHandler("127.0.0.1", 5000)
-    status, response = rh.send("GET")
