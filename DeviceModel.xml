@@ -12,7 +12,7 @@
             <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="15"
+                          minorversion="17"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -186,7 +186,7 @@
                 <!-- Folders -->
                 <vnsMFolder key="configuration" description="Configuration" cardinality="n" dispLabel="Configuration">
                     <vnsMParam key="name" description="Name of the configuration" dispLabel="Configuration name" dType="str" mandatory="false"/>
-                    <vnsMParam key="enabled" description="Enable or not the configuration (True or False)" dispLabel="Enable the configuration (True or False)" dType="str" mandatory="false" validation="isBoolean"/>
+                    <vnsMParam key="enabled" description="Enable or not the configuration (True/False)" dispLabel="Enable the configuration (True/False)" dType="str" mandatory="false" validation="isBoolean"/>
 
                     <vnsMFolder key="upstreamCfg"
                             description="backend"
@@ -250,6 +250,7 @@
                         <vnsAbsFuncCfg>
                             <vnsAbsFolder key="configuration" name="Configuration">
                                 <vnsAbsParam name="name" key="name" value="default"/>
+                                <vnsAbsParam name="enabled" key="enabled" value="True"/>
 
                                 <vnsAbsFolder key="upstreamCfg" name="upstreamCfg">
                                     <vnsAbsCfgRel name="upstreamRel" key="upstreamRel" targetName="upstream"/>
