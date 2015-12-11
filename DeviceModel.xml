@@ -12,7 +12,7 @@
             <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="12"
+                          minorversion="17"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
