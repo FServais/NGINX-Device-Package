@@ -9,7 +9,6 @@
             <!-- - - - - - - - - - - - - - - - - - - - - -->
 
             <!-- Script -->
-            <!-- TODO: complete versionExpr -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
                           minorversion="18"
