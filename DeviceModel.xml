@@ -19,9 +19,6 @@
                 <vnsDevInt name="eth0"/>
                 <vnsDevInt name="eth1"/>
                 <vnsDevInt name="eth2"/>
-                <vnsDevInt name="eth3"/>
-                <vnsDevInt name="eth4"/>
-                <vnsDevInt name="eth5"/>
             </vnsDevProf>
 
             <!-- Credentials -->
