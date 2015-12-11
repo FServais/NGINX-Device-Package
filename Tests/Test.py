@@ -5,7 +5,7 @@ from Exporter.FileExporter import file_exporter
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
 
-device = {'creds': {'username': 'root', 'password': '***REMOVED***'}, 'host': '178.62.144.145', 'port': 5000, 'virtual': True}
+device = {'creds': {'username': 'root', 'password': '<hidden>'}, 'host': '178.62.144.145', 'port': 5000, 'virtual': True}
 configuration = {(0, '', 5167): {'ackedstate': 0,
                  'ctxName': 'VRF_NG',
                  'dn': u'uni/vDev-[uni/tn-NGINX/lDevVip-NginxDevice]-tn-[uni/tn-NGINX]-ctx-VRF_NG',
