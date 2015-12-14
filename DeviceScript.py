@@ -5,6 +5,7 @@ import os
 import sys
 
 from Exporter.FileExporter import file_exporter
+from NGINXConfiguration.NginxConfigurationFactory import NginxConfigurationFactory
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
 from utils import logger
@@ -61,11 +62,7 @@ def clusterModify(device, interfaces, configuration):
 # Services
 def serviceAudit(device, configuration):
     logger.log("\n---- serviceAudit with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
 
-
-def serviceModify(device, configuration):
-    logger.log("\n---- serviceModify with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
     logger.log("Initialize the configurations...")
     # Convert configuration into API object
     api_config = Configuration(configuration)
@@ -76,7 +73,8 @@ def serviceModify(device, configuration):
     logger.log("> Device\n{}".format(nginx_device))
 
     # Convert configuration into NGINX objects
-    nginx_configurations = NginxConfiguration.from_configurations(api_config)
+    nginx_configurations = NginxConfigurationFactory.from_API_configuration(api_config)
+    # nginx_configurations = NginxConfiguration.from_configurations(api_config)
 
     logger.log("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
 
@@ -94,10 +92,50 @@ def serviceModify(device, configuration):
             logger.log("Pushing the configuration...")
             # Push
             if nginx_configuration.name in sites:
-                print("Update '{}'".format(nginx_configuration.name))
+                logger.log("Update '{}'".format(nginx_configuration.name))
                 nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
             else:
-                print("Add '{}'".format(nginx_configuration.name))
+                logger.log("Add '{}'".format(nginx_configuration.name))
+                nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+
+    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+
+
+def serviceModify(device, configuration):
+    logger.log("\n---- serviceModify with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
+    logger.log("Initialize the configurations...")
+    # Convert configuration into API object
+    api_config = Configuration(configuration)
+    logger.log("> Configuration\n{}".format(api_config))
+
+    # Create NginxDevice
+    nginx_device = NginxDevice(device)
+    logger.log("> Device\n{}".format(nginx_device))
+
+    # Convert configuration into NGINX objects
+    nginx_configurations = NginxConfigurationFactory.from_API_configuration(api_config)
+
+    logger.log("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
+
+    for nginx_configuration in nginx_configurations:
+        logger.log(">> For configuration {}".format(nginx_configuration.name))
+        logger.log("Generating the string...")
+        # Generate (nginx) string of the configuration
+        string_config_file = nginx_configuration.visit(file_exporter())
+
+        logger.log("Getting the list of the sites...")
+        # Get the list of existing configurations
+        status, sites = nginx_device.get_site_list(all_available_sites=True)
+        logger.log('Status: {} ; Sites: {}'.format(status, sites))
+
+        if status:
+            logger.log("Pushing the configuration...")
+            # Push
+            if nginx_configuration.name in sites:
+                logger.log("Update '{}'".format(nginx_configuration.name))
+                nginx_device.update_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
+            else:
+                logger.log("Add '{}'".format(nginx_configuration.name))
                 nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
 
     return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()

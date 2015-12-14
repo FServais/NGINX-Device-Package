@@ -11,7 +11,7 @@
             <!-- Script -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="18"
+                          minorversion="25"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 

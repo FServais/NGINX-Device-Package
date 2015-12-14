@@ -55,6 +55,43 @@ class Configuration:
     def get_value(self):
         return self.value
 
+    def get_value_by_key(self, key):
+        if self.value is None:
+            return None
+
+        values = []
+
+        for value in self.value:
+            if value.get_key() == key:
+                values.append(value)
+
+        return values
+
+    def get_value_by_type(self, type):
+        if self.value is None:
+            return None
+
+        values = []
+
+        for value in self.value:
+            if value.get_type() == type:
+                values.append(value)
+
+        return values
+
+    def get_value_by_key_name(self, key, name):
+        if self.value is None:
+            return None
+
+        for value in self.value:
+            if value.get_key() == key and value.get_name() == name:
+                return value
+
+        return None
+
+    def get_target(self):
+        return self.target
+
 if __name__ == "__main__":
 
     nginxServiceAuditConfig = {(0, '', 5167): {'ackedstate': 0,
