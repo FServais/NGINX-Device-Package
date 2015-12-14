@@ -246,7 +246,7 @@
                         <vnsAbsFuncCfg>
                             <vnsAbsFolder key="configuration" name="Configuration">
                                 <vnsAbsParam name="name" key="name" value="default"/>
-                                <vnsAbsParam name="enabled" key="enabled" value="True"/>
+                                <vnsAbsParam name="enabled" key="enabled" value="true"/>
 
                                 <vnsAbsFolder key="upstreamCfg" name="upstreamCfg">
                                     <vnsAbsCfgRel name="upstreamRel" key="upstreamRel" targetName="upstream"/>
