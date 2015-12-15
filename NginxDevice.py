@@ -20,11 +20,17 @@ class NginxDevice(Device):
         self.request_handler = RequestHandler(self.host_ip, self.port, self.username, self.password)
 
     def __str__(self):
-        return '{} -> {}:{}@{}:{}'.format(self.name, self.username, self.password, self.host_ip, self.port)
+        return '{} -> {}:<hidden>@{}:{}'.format(self.name, self.username, self.host_ip, self.port)
         # return pformat(self.orig_dict)
 
     def __repr__(self):
         return str(self)
+
+    def enable_https(self):
+        self.request_handler.https = True
+
+    def disable_https(self):
+        self.request_handler.https = False
 
     def ping(self):
         status, _ = self.request_handler.send("GET", self.__URI_ROOT)

@@ -11,7 +11,7 @@
             <!-- Script -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="25"
+                          minorversion="1"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -168,11 +168,11 @@
                 <vnsMImage name="cisco.gif"/>
 
                 <!-- Connector Objects -->
-                <vnsMConn name="internal" encType="vlan" dir="output">
+                <vnsMConn name="internal" encType="vlan" dir="output" epNotifications="endpoint">
                     <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-1.0/mIfLbl-internal"/>
                 </vnsMConn>
 
-                <vnsMConn name="external" encType="vlan" dir="input">
+                <vnsMConn name="external" encType="vlan" dir="input" epNotifications="endpoint">
                     <vnsRsInterface tDn="uni/infra/mDev-nginx-nginx-1.0/mIfLbl-external"/>
                 </vnsMConn>
 
@@ -202,6 +202,10 @@
                         </vnsMRel>
                     </vnsMFolder>
 
+                </vnsMFolder>
+
+                <vnsMFolder key="management" cardinality="1" description="Configuration of the management link" dispLabel="Management interface">
+                    <vnsMParam key="https" dispLabel="HTTPS" description="HTTPS (true) or HTTP (false)" dType="str" mandatory="true" validation="isBoolean"/>
                 </vnsMFolder>
 
             </vnsMFunc>
@@ -256,6 +260,10 @@
                                     <vnsAbsCfgRel name="frontendServerRel" key="frontendServerRel" targetName="frontendServer"/>
                                 </vnsAbsFolder>
 
+                            </vnsAbsFolder>
+
+                            <vnsAbsFolder key="management" name="management">
+                                <vnsAbsParam name="https" key="https" value="true"/>
                             </vnsAbsFolder>
                         </vnsAbsFuncCfg>
 

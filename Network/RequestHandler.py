@@ -6,7 +6,7 @@ __author__ = 'Fabrice Servais'
 
 class RequestHandler:
 
-    def __init__(self, address, port, username=None, password=None):
+    def __init__(self, address, port, username=None, password=None, https=True):
         self.address = address
         self.port = port
 
@@ -14,6 +14,8 @@ class RequestHandler:
         self.password = password
 
         self.response = None
+        self.https = https
+
 
     def send(self, method="GET", location="/", url_params=None, payload=None):
         logger.log("[Request] Try to connect at {}".format(self.url(location)))
@@ -43,4 +45,4 @@ class RequestHandler:
         return self.response.status_code, json
 
     def url(self, location):
-        return "https://{}:{}{}".format(self.address, self.port, location)
+        return "http://{}:{}{}".format(self.address, self.port, location)

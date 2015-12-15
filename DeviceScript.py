@@ -22,40 +22,40 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 # Device
 def deviceValidate(device, version):
     logger.log("\n---- deviceValidate with parameters\n--> 'device' : {}\n--> 'version' : {}".format(device, version))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def deviceAudit(device, interfaces, configuration):
     logger.log("\n---- deviceAudit with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def deviceModify(device, interfaces, configuration):
     logger.log("\n---- deviceModify with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 
 def deviceHealth(device, interfaces, configuration):
     logger.log("\n---- deviceHealth with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def deviceCounters(device, interfaces, configuration):
     logger.log("\n---- deviceCounters with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 #
 # Clusters
 def clusterAudit(device, interfaces, configuration):
     logger.log("\n---- clusterAudit with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def clusterModify(device, interfaces, configuration):
     logger.log("\n---- clusterModify with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 #
@@ -73,8 +73,13 @@ def serviceAudit(device, configuration):
     logger.log("> Device\n{}".format(nginx_device))
 
     # Convert configuration into NGINX objects
-    nginx_configurations = NginxConfigurationFactory.from_API_configuration(api_config)
-    # nginx_configurations = NginxConfiguration.from_configurations(api_config)
+    nginx_configurations, management_configuration = NginxConfigurationFactory.from_API_configuration(api_config)
+    logger.log("Nginxconfig: {}".format(nginx_configurations))
+    logger.log("Management: {}".format(management_configuration))
+    https_enable = management_configuration['https']
+
+    if not https_enable:
+        nginx_device.disable_https()
 
     logger.log("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
 
@@ -98,7 +103,7 @@ def serviceAudit(device, configuration):
                 logger.log("Add '{}'".format(nginx_configuration.name))
                 nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
 
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def serviceModify(device, configuration):
@@ -113,7 +118,13 @@ def serviceModify(device, configuration):
     logger.log("> Device\n{}".format(nginx_device))
 
     # Convert configuration into NGINX objects
-    nginx_configurations = NginxConfigurationFactory.from_API_configuration(api_config)
+    nginx_configurations, management_configuration = NginxConfigurationFactory.from_API_configuration(api_config)
+    logger.log("Nginxconfig: {}".format(nginx_configurations))
+    logger.log("Management: {}".format(management_configuration))
+    https_enable = management_configuration['https']
+
+    if not https_enable:
+        nginx_device.disable_https()
 
     logger.log("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
 
@@ -138,34 +149,39 @@ def serviceModify(device, configuration):
                 logger.log("Add '{}'".format(nginx_configuration.name))
                 nginx_device.create_site_config(nginx_configuration.name, string_config_file, enable=nginx_configuration.enabled)
 
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def serviceHealth(device, configuration):
     logger.log("\n---- serviceHealth with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def serviceCounters(device, configuration):
     logger.log("\n---- serviceCounters with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def attachEndpoint(device, configuration, endpoints):
     logger.log("\n---- attachEndpoint with parameters\n--> 'device' : {}\n--> 'configuration' : {}\n--> 'endpoints' : {}".format(device, configuration, endpoints))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def detachEndpoint(device, configuration, endpoints):
     logger.log("\n---- detachEndpoint with parameters\n--> 'device' : {}\n--> 'configuration' : {}\n--> 'endpoints' : {}".format(device, configuration, endpoints))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def attachNetwork(device, configuration, connector, networks):
     logger.log("\n---- attachNetwork with parameters\n--> 'device' : {}\n--> 'configuration' : {}\n--> 'connector' : {}\n--> 'networks' : {}".format(device, configuration, connector, networks))
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return return_ok()
 
 
 def detachNetwork(device, configuration, connector, networks):
     logger.log("\n---- detachNetwork with parameters\n--> 'device' : {}\n--> 'configuration' : {}\n--> 'connector' : {}\n--> 'networks' : {}".format(device, configuration, connector, networks))
+    return return_ok()
+
+
+# Misc. functions
+def return_ok():
     return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()

@@ -12,7 +12,7 @@ class NginxConfigurationFactory:
         if api_configuration.get_type() == 0:
             return cls.from_configurations(api_configuration.get_value())
 
-        return []
+        return [], {}
 
     @classmethod
     def from_configurations(cls, configurations):
@@ -28,10 +28,14 @@ class NginxConfigurationFactory:
         backend_configurations = {}
 
         nginx_final_configurations = []
+
+        management_configuration = {}
         for configuration in configurations:
             # Configurations of vnsMFunc
             if configuration.get_type() == 1:
                 function_load_balancer = configuration.get_value()[0]  # (3,....) -> ...
+
+                # Get the configurations
                 func_configurations = function_load_balancer.get_value_by_key('configuration')  # (4, 'configuration', 'Configuration') -> ...
 
                 for func_cfg in func_configurations:
@@ -75,6 +79,27 @@ class NginxConfigurationFactory:
 
                     keys[func_cfg.get_name()] = {'frontendCfgs': frontend_configs, 'upstreamCfgs': backend_configs, 'enabled': enabled}
 
+                # Get the management configuration
+                mgmt_cfg_value = function_load_balancer.get_value_by_key('management')
+
+                if not mgmt_cfg_value:
+                    continue
+
+                # Get the HTTPS parameter
+                management_configuration['https'] = False
+                https_cfg = mgmt_cfg_value[0].get_value()
+
+                if not https_cfg:
+                    continue
+
+                https_val = https_cfg[0].get_value()
+
+                if not https_val:
+                    continue
+
+                management_configuration['https'] = (str(https_val.lower()) == 'true')
+
+
             # Configurations of vnsMDevCfg
             elif configuration.get_type() == 4:
                 nginx_config_type_class = None
@@ -92,4 +117,4 @@ class NginxConfigurationFactory:
 
             nginx_final_configurations.append(NginxConfiguration(frontends, backends, config_name, config_value_names["enabled"]))
 
-        return nginx_final_configurations
+        return nginx_final_configurations, management_configuration
