@@ -5,7 +5,7 @@ import os
 import sys
 
 from Exporter.FileExporter import file_exporter
-from NGINXConfiguration.NginxConfigurationFactory import NginxConfigurationFactory
+from NGINXConfiguration.ConfigurationParser import ConfigurationParser
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
 from utils import logger
@@ -66,16 +66,13 @@ def serviceAudit(device, configuration):
     logger.log("Initialize the configurations...")
     # Convert configuration into API object
     api_config = Configuration(configuration)
-    logger.log("> Configuration\n{}".format(api_config))
 
     # Create NginxDevice
     nginx_device = NginxDevice(device)
-    logger.log("> Device\n{}".format(nginx_device))
 
     # Convert configuration into NGINX objects
-    nginx_configurations, management_configuration = NginxConfigurationFactory.from_API_configuration(api_config)
-    logger.log("Nginxconfig: {}".format(nginx_configurations))
-    logger.log("Management: {}".format(management_configuration))
+    nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
+
     https_enable = management_configuration['https']
 
     if not https_enable:
@@ -118,7 +115,7 @@ def serviceModify(device, configuration):
     logger.log("> Device\n{}".format(nginx_device))
 
     # Convert configuration into NGINX objects
-    nginx_configurations, management_configuration = NginxConfigurationFactory.from_API_configuration(api_config)
+    nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
     logger.log("Nginxconfig: {}".format(nginx_configurations))
     logger.log("Management: {}".format(management_configuration))
     https_enable = management_configuration['https']

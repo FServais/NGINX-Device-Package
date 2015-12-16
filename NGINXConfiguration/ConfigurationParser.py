@@ -5,7 +5,7 @@ from NGINXConfiguration.NginxFrontend import NginxFrontend
 __author__ = 'Fabrice Servais'
 
 
-class NginxConfigurationFactory:
+class ConfigurationParser:
 
     @classmethod
     def from_API_configuration(cls, api_configuration):
@@ -86,7 +86,7 @@ class NginxConfigurationFactory:
                     continue
 
                 # Get the HTTPS parameter
-                management_configuration['https'] = False
+                management_configuration['https'] = True # Default value
                 https_cfg = mgmt_cfg_value[0].get_value()
 
                 if not https_cfg:
