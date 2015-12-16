@@ -45,4 +45,4 @@ class RequestHandler:
         return self.response.status_code, json
 
     def url(self, location):
-        return "http://{}:{}{}".format(self.address, self.port, location)
+        return ("https" if self.https else "http") + "://{}:{}{}".format(self.address, self.port, location)
