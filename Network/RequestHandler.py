@@ -6,7 +6,7 @@ __author__ = 'Fabrice Servais'
 
 class RequestHandler:
 
-    def __init__(self, address, port, username=None, password=None, https=True):
+    def __init__(self, address, port, username=None, password=None, https=False):
         self.address = address
         self.port = port
 

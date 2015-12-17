@@ -6,7 +6,7 @@ from NGINXConfiguration.ConfigurationParser import ConfigurationParser
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
 
-device = {'name': 'NginxLoadBalancer', 'virtual': True, 'devs': {'NginxLoadBalancer_Device_1': {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '10.9.14.73', 'port': 80, 'virtual': True}}, 'host': '10.9.14.73', 'contextaware': False, 'port': 80, 'creds': {'username': 'fservais', 'password': '<hidden>'}}
+device = {'name': 'NginxLoadBalancer', 'virtual': True, 'devs': {'NginxLoadBalancer_Device_1': {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 80, 'virtual': True}}, 'host': '127.0.0.1', 'contextaware': False, 'port': 5000, 'creds': {'username': 'fservais', 'password': '<hidden>'}}
 configuration = {(0, '', 4099): {'ackedstate': 0,
                  'ctxName': 'VRF_NG',
                  'dn': u'uni/vDev-[uni/tn-NGINX/lDevVip-NginxDevice]-tn-[uni/tn-NGINX]-ctx-VRF_NG',
@@ -147,36 +147,44 @@ configuration = {(0, '', 4099): {'ackedstate': 0,
                                                           'state': 1,
                                                           'transaction': 0}}}}
 
-print("\n---- serviceModify with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
-print("Initialize the configurations...")
-# Convert configuration into API object
-api_config = Configuration(configuration)
-print("> Configuration\n{}".format(api_config))
 
+# print("\n---- serviceModify with parameters\n--> 'device' : {}\n--> 'configuration' : {}".format(device, configuration))
+# print("Initialize the configurations...")
+# # Convert configuration into API object
+# api_config = Configuration(configuration)
+# print("> Configuration\n{}".format(api_config))
+#
 # Create NginxDevice
 nginx_device = NginxDevice(device)
 print("> Device\n{}".format(nginx_device))
 
-# Convert configuration into NGINX objects
-nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
-https_enable = management_configuration['https']
+nginx_device.disable_https()
 
-if not https_enable:
-    nginx_device.disable_https()
+print("PING")
+status, device_status = nginx_device.check_device_status()
+print(status)
+print(device_status)
 
-print("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
-
-for nginx_configuration in nginx_configurations:
-    print(">> For configuration {}".format(nginx_configuration.name))
-    print("Generating the string...")
-    # Generate (nginx) string of the configuration
-    string_config_file = nginx_configuration.visit(file_exporter())
-    print(string_config_file)
-
-    print("Getting the list of the sites...")
-    # Get the list of existing configurations
-    status, sites = nginx_device.get_site_list(all_available_sites=True)
-    print('Status: {} ; Sites: {}'.format(status, sites))
+# # Convert configuration into NGINX objects
+# nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
+# https_enable = management_configuration['https']
+#
+# if not https_enable:
+#     nginx_device.disable_https()
+#
+# print("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
+#
+# for nginx_configuration in nginx_configurations:
+#     print(">> For configuration {}".format(nginx_configuration.name))
+#     print("Generating the string...")
+#     # Generate (nginx) string of the configuration
+#     string_config_file = nginx_configuration.visit(file_exporter())
+#     print(string_config_file)
+#
+#     print("Getting the list of the sites...")
+#     # Get the list of existing configurations
+#     status, sites = nginx_device.get_site_list(all_available_sites=True)
+#     print('Status: {} ; Sites: {}'.format(status, sites))
     #
     # if status:
     #     print("Pushing the configuration...")

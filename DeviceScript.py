@@ -5,8 +5,10 @@ import os
 import sys
 
 from Exporter.FileExporter import file_exporter
+from Fault.Fault import Fault, FaultCode
 from NGINXConfiguration.ConfigurationParser import ConfigurationParser
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
+from Network.ConnectivityChecking import ConnectivityChecking
 from NginxDevice import NginxDevice
 from utils import logger
 from API.ReturnValue import ReturnValue
@@ -38,6 +40,22 @@ def deviceModify(device, interfaces, configuration):
 
 def deviceHealth(device, interfaces, configuration):
     logger.log("\n---- deviceHealth with parameters\n--> 'device' : {}\n--> 'interfaces' : {}\n--> 'configuration' : {}".format(device, interfaces, configuration))
+
+    nginx_device = NginxDevice(device)
+
+    logger.log("Ping {}...".format(nginx_device.host_ip))
+    if not ConnectivityChecking.ping(nginx_device.host_ip):
+        return return_transient(0, faults=[Fault([], FaultCode.DeviceNotReachable, "Device not responding.").value()])
+    logger.log("Ping OK!")
+
+    logger.log("Checking device status...")
+    status, device_status = nginx_device.check_device_status()
+
+    logger.log("Status: {} ; Device: {}".format(status, device_status))
+
+    if not status or device_status != 0:
+        return return_transient(50, faults=[Fault([], FaultCode.AgentNotReachable, "Agent not responding.").value()])
+
     return return_ok()
 
 
@@ -181,4 +199,7 @@ def detachNetwork(device, configuration, connector, networks):
 
 # Misc. functions
 def return_ok():
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], fault=[]).get_return_value()
+    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], faults=[]).get_return_value()
+
+def return_transient(health_score=100, faults=[]):
+    return ReturnValue(state=Result.TRANSIENT, health=[([], health_score)], faults=faults).get_return_value()

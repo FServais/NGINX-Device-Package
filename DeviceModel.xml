@@ -11,7 +11,7 @@
             <!-- Script -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="1"
+                          minorversion="6"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -67,6 +67,21 @@
                 <vnsComparison cmp="eq" name="memcached_pass" value="memcached_pass"/>
             </vnsComposite>
 
+
+            <!-- Errors -->
+            <vnsMDfcts>
+                <vnsMDfct code="10"
+                          descr="Agent not reachable"
+                          recAct="Check that the Agent is running at the correct address and port on the device (REST call failed).">
+                    <vnsRsDfctToCat tDn="dfctCats/dfctCat-major"/>
+                </vnsMDfct>
+
+                <vnsMDfct code="20"
+                          descr="Device not reachable"
+                          recAct="Check that the device is running at the correct address and port (ping failed).">
+                    <vnsRsDfctToCat tDn="dfctCats/dfctCat-major"/>
+                </vnsMDfct>
+            </vnsMDfcts>
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
             <!--  CLUSTER AND DEVICE CONFIGURATION PART  -->

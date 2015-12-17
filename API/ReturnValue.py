@@ -4,8 +4,8 @@ __author__ = 'Fabrice Servais'
 
 
 class ReturnValue:
-    def __init__(self, state, health, fault):
-        self.return_value = {'state': state, 'health': health, 'fault': fault}
+    def __init__(self, state, health, faults):
+        self.return_value = {'state': state, 'health': health, 'faults': faults}
 
     def __repr__(self):
         return "{}".format(self.return_value)

@@ -36,6 +36,21 @@ class NginxDevice(Device):
         status, _ = self.request_handler.send("GET", self.__URI_ROOT)
         return status == 200
 
+    def check_device_status(self):
+        status, message = self.request_handler.send("GET", self.__URI_ROOT)
+
+        if status != 200:
+            return False, 1
+
+        if message is None:
+            return status == 200, 1
+
+        print("Status", status)
+        print("Message", message)
+        device_status = message["status"]
+
+        return status == 200, device_status
+
     def get_site_list(self, all_available_sites=False):
         status, message = self.request_handler.send("GET", self.__URI_SITE_CONFIG, url_params={'allAvailable':all_available_sites})
 
