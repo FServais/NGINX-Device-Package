@@ -126,3 +126,8 @@ class NginxConfiguration:
 
     def visit(self, visitor):
         return visitor(self)
+
+    def get_backends(self):
+        return self.backends
+
+

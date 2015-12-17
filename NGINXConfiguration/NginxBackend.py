@@ -76,6 +76,9 @@ class NginxBackend:
     def visit(self, visitor):
         return visitor(self)
 
+    def get_backend_servers(self):
+        return self.server_pool
+
 if __name__ == "__main__":
     backend = NginxBackend(method="ip-hash")
     backend_server1 = NginxBackendServer(address="127.0.0.1", port=80,
