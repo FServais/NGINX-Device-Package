@@ -43,20 +43,26 @@ def deviceHealth(device, interfaces, configuration):
 
     nginx_device = NginxDevice(device)
 
+    # Try to ping first
     logger.log("Ping {}...".format(nginx_device.host_ip))
     if not ConnectivityChecking.ping(nginx_device.host_ip):
         return return_transient(0, faults=[Fault([], FaultCode.DeviceNotReachable, "Device not responding.").value()])
     logger.log("Ping OK!")
 
-    logger.log("Checking device status...")
-    status, device_status = nginx_device.check_device_status()
+    # logger.log("Checking device status...")
+    # status, device_status = nginx_device.check_device_status()
+    #
+    # logger.log("Status: {} ; Device: {}".format(status, device_status))
+    #
+    # if not status or device_status != 0:
+    #     return return_transient(50, faults=[Fault([], FaultCode.AgentNotReachable, "Agent not responding.").value()])
 
-    logger.log("Status: {} ; Device: {}".format(status, device_status))
+    status, score = nginx_device.check_device_status()
 
-    if not status or device_status != 0:
+    if not status:
         return return_transient(50, faults=[Fault([], FaultCode.AgentNotReachable, "Agent not responding.").value()])
 
-    return return_ok()
+    return return_ok(score=score)
 
 
 def deviceCounters(device, interfaces, configuration):
@@ -198,8 +204,8 @@ def detachNetwork(device, configuration, connector, networks):
 
 
 # Misc. functions
-def return_ok():
-    return ReturnValue(state=Result.SUCCESS, health=[([], 100)], faults=[]).get_return_value()
+def return_ok(score=100):
+    return ReturnValue(state=Result.SUCCESS, health=[([], score)], faults=[]).get_return_value()
 
 def return_transient(health_score=100, faults=[]):
     return ReturnValue(state=Result.TRANSIENT, health=[([], health_score)], faults=faults).get_return_value()

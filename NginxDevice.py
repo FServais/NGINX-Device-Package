@@ -15,6 +15,8 @@ class NginxDevice(Device):
 
     __URI_SITE_CONFIG = __URI_CONFIG + "/site"
 
+    __URI_HEALTH_DEVICE = "/health/device"
+
     def __init__(self, device_dict):
         Device.__init__(self, device_dict)
         self.request_handler = RequestHandler(self.host_ip, self.port, self.username, self.password)
@@ -37,19 +39,31 @@ class NginxDevice(Device):
         return status == 200
 
     def check_device_status(self):
-        status, message = self.request_handler.send("GET", self.__URI_ROOT)
+        # status, message = self.request_handler.send("GET", self.__URI_ROOT)
+        #
+        # if status != 200:
+        #     return False, 1
+        #
+        # if message is None:
+        #     return status == 200, 1
+        #
+        # print("Status", status)
+        # print("Message", message)
+        # device_status = message["status"]
+        #
+        # return status == 200, device_status
 
+        # TODO Get LB (device) name
+        device_name = 'lb'
+
+        status, message = self.request_handler.send('GET', self.__URI_HEALTH_DEVICE + '/' + device_name)
         if status != 200:
-            return False, 1
+            return False, 0
 
-        if message is None:
-            return status == 200, 1
+        score = message['score']
+        logger.log("Health score of {}: {}".format(device_name, score))
 
-        print("Status", status)
-        print("Message", message)
-        device_status = message["status"]
-
-        return status == 200, device_status
+        return status == 200, score
 
     def get_site_list(self, all_available_sites=False):
         status, message = self.request_handler.send("GET", self.__URI_SITE_CONFIG, url_params={'allAvailable':all_available_sites})
