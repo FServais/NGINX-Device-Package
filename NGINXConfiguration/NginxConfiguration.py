@@ -63,19 +63,6 @@ class NginxConfiguration:
     def __repr__(self):
         return str(self)
 
-    def export(self):
-        """
-        Generate the String containing the corresponding configuration for NGINX.
-        :return: String of the configuration, usable by NGINX.
-        """
-        # front = [str(self.frontend.export())] if self.frontend is not None else []
-        fronts = [str(frontend.export()) for frontend in self.frontends]
-        back = [str(backend.export()) for backend in self.backends]
-
-        content = fronts + back
-
-        return '\n'.join(content)
-
     def visit(self, visitor):
         return visitor(self)
 
