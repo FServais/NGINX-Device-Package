@@ -33,54 +33,6 @@ class NginxConfiguration:
         self.name = name
         self.enabled = enabled
 
-    @classmethod
-    def from_configurations(cls, configurations):
-        """
-
-        :param configurations: Type list<API.Configuration>
-        :return:
-        """
-        nginx_configurations = []
-        if configurations.get_type() == 0:
-            configs = configurations.get_value()
-
-            for config in configs:
-                if config.get_type() == 4 and config.get_key() == "configuration":
-                    nginx_configurations.append(NginxConfiguration.from_configuration(config.get_value()))
-
-        return nginx_configurations
-
-    @classmethod
-    def from_configuration(cls, configuration):
-        """
-
-        :param configuration: Type API.Configuration or list<API.Configuration>
-        :return:
-        """
-        fronts = []
-        backends = []
-        name = "default"
-        enabled = True
-
-        for config in configuration:
-            if config.get_type() == 4:
-
-                if config.get_key() == "frontendServer":
-                    fronts.append(NginxFrontend.from_configuration(config.get_value()))
-                elif config.get_key() == "upstream":
-                    backends.append(NginxBackend.from_configuration(config.get_value()))
-
-            if config.get_type() == 5:
-                # [(5, "name", ..) -> {}, (5, "enabled", ..) -> {}]
-                if config.get_key() == "name":
-                    name = config.get_value()
-                elif config.get_key() == "enabled":
-                    en = config.get_value()
-                    if en is not None:
-                        enabled = en.lower() == "true"
-
-        return NginxConfiguration(fronts, backends, name, enabled)
-
     def add_frontend(self, frontend):
         """Add a 'frontend' block, i.e. a frontend pool
         :param frontend: Type: NginxFrontend, frontend
