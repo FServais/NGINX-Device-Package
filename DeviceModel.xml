@@ -11,7 +11,7 @@
             <!-- Script -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="6"
+                          minorversion="8"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -163,8 +163,6 @@
                         <vnsMParam key="pass_method" description="Pass method (default: proxy_pass)" mandatory="false" dType="str" dispLabel="Pass method" validation="isPassMethod"/>
                         <vnsMParam key="https" description="Is the protocol HTTPS ?" mandatory="false" dType="str" dispLabel="HTTPS (True/False)" validation="isBoolean"/>
                     </vnsMFolder>
-
-                    <vnsMParam key="frontend_name" description="Name of the frontend server" dispLabel="Frontend name" dType="str" mandatory="false"/>
 
                 </vnsMFolder>
 
