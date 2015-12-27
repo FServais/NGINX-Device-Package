@@ -1,30 +1,185 @@
-from NGINXConfiguration.NginxBackend import NginxBackend
-from NGINXConfiguration.NginxBackendServer import NginxBackendServer
-from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
-from NGINXConfiguration.NginxConfiguration import NginxConfiguration
-from NGINXConfiguration.NginxFrontend import NginxFrontend
-from NGINXConfiguration.NginxServerLocation import NginxServerLocation
+from API.Configuration import Configuration
+from Exporter.FileExporter import file_exporter
+from NGINXConfiguration.ConfigurationParser import ConfigurationParser
+from NginxDevice import NginxDevice
 
 __author__ = 'Fabrice Servais'
+device = {'name': 'NginxLoadBalancer', 'virtual': True, 'devs': {'NginxLoadBalancer_Device_1': {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 80, 'virtual': True}}, 'host': '127.0.0.1', 'contextaware': False, 'port': 5000, 'creds': {'username': 'fservais', 'password': '<hidden>'}}
+configuration = {(0, '', 5480): {'ackedstate': 0,
+                 'ctxName': 'VRF_NG',
+                 'dn': u'uni/vDev-[uni/tn-NGINX/lDevVip-NginxDevice]-tn-[uni/tn-NGINX]-ctx-VRF_NG',
+                 'state': 1,
+                 'tenant': 'NGINX',
+                 'transaction': 0,
+                 'txid': 10000,
+                 'value': {(1, '', 20350): {'absGraph': 'NginxLB_SGT',
+                                            'ackedstate': 0,
+                                            'rn': u'vGrp-[uni/tn-NGINX/GraphInst_C-[uni/tn-NGINX/brc-NginxLB_contract]-G-[uni/tn-NGINX/AbsGraph-NginxLB_SGT]-S-[uni/tn-NGINX]]',
+                                            'state': 1,
+                                            'transaction': 0,
+                                            'value': {(3, 'LoadBalancer', 'N1'): {'ackedstate': 0,
+                                                                                  'state': 1,
+                                                                                  'transaction': 0,
+                                                                                  'value': {(2, 'external', 'consumer'): {'ackedstate': 0,
+                                                                                                                          'state': 1,
+                                                                                                                          'transaction': 0,
+                                                                                                                          'value': {(9, '', 'NginxDevice_client_2129920_49162'): {'ackedstate': 0,
+                                                                                                                                                                                  'state': 1,
+                                                                                                                                                                                  'target': 'NginxDevice_client_2129920_49162',
+                                                                                                                                                                                  'transaction': 0}}},
+                                                                                            (2, 'internal', 'provider'): {'ackedstate': 0,
+                                                                                                                          'state': 1,
+                                                                                                                          'transaction': 0,
+                                                                                                                          'value': {(9, '', 'NginxDevice_pool_2129920_16389'): {'ackedstate': 0,
+                                                                                                                                                                                'state': 1,
+                                                                                                                                                                                'target': 'NginxDevice_pool_2129920_16389',
+                                                                                                                                                                                'transaction': 0}}},
+                                                                                            (4, 'configuration', 'Configuration'): {'ackedstate': 0,
+                                                                                                                                    'state': 1,
+                                                                                                                                    'transaction': 0,
+                                                                                                                                    'value': {(4, 'frontendServerCfg', 'frontendServerCfg'): {'ackedstate': 0,
+                                                                                                                                                                                              'state': 1,
+                                                                                                                                                                                              'transaction': 0,
+                                                                                                                                                                                              'value': {(6, 'frontendServerRel', 'frontendServerRel'): {'ackedstate': 0,
+                                                                                                                                                                                                                                                        'state': 1,
+                                                                                                                                                                                                                                                        'target': 'frontendServer',
+                                                                                                                                                                                                                                                        'transaction': 0}}},
+                                                                                                                                              (4, 'upstreamCfg', 'upstreamCfg'): {'ackedstate': 0,
+                                                                                                                                                                                  'state': 1,
+                                                                                                                                                                                  'transaction': 0,
+                                                                                                                                                                                  'value': {(6, 'upstreamRel', 'upstreamRel'): {'ackedstate': 0,
+                                                                                                                                                                                                                                'state': 1,
+                                                                                                                                                                                                                                'target': 'upstream',
+                                                                                                                                                                                                                                'transaction': 0}}},
+                                                                                                                                              (5, 'enabled', 'enabled'): {'ackedstate': 0,
+                                                                                                                                                                          'state': 1,
+                                                                                                                                                                          'transaction': 0,
+                                                                                                                                                                          'value': 'true'}}},
+                                                                                            (4, 'management', 'management'): {'ackedstate': 0,
+                                                                                                                              'state': 1,
+                                                                                                                              'transaction': 0,
+                                                                                                                              'value': {(5, 'https', 'https'): {'ackedstate': 0,
+                                                                                                                                                                'state': 1,
+                                                                                                                                                                'transaction': 0,
+                                                                                                                                                                'value': 'false'}}}}}}},
+                           (4, 'frontendServer', 'frontendServer'): {'ackedstate': 0,
+                                                                     'state': 1,
+                                                                     'transaction': 0,
+                                                                     'value': {(4, 'listen', 'listen'): {'ackedstate': 0,
+                                                                                                         'state': 1,
+                                                                                                         'transaction': 0,
+                                                                                                         'value': {(5, 'address', 'address'): {'ackedstate': 0,
+                                                                                                                                               'state': 1,
+                                                                                                                                               'transaction': 0,
+                                                                                                                                               'value': '10.9.217.1'},
+                                                                                                                   (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                                         'state': 1,
+                                                                                                                                         'transaction': 0,
+                                                                                                                                         'value': '80'}}},
+                                                                               (4, 'location', 'location'): {'ackedstate': 0,
+                                                                                                             'state': 1,
+                                                                                                             'transaction': 0,
+                                                                                                             'value': {(5, 'backend_name', 'backend_name'): {'ackedstate': 0,
+                                                                                                                                                             'state': 1,
+                                                                                                                                                             'transaction': 0,
+                                                                                                                                                             'value': 'backend'},
+                                                                                                                       (5, 'uri', 'uri'): {'ackedstate': 0,
+                                                                                                                                           'state': 1,
+                                                                                                                                           'transaction': 0,
+                                                                                                                                           'value': '/'}}}}},
+                           (4, 'upstream', 'upstream'): {'ackedstate': 0,
+                                                         'state': 1,
+                                                         'transaction': 0,
+                                                         'value': {(4, 'server', 'web1'): {'ackedstate': 0,
+                                                                                           'state': 1,
+                                                                                           'transaction': 0,
+                                                                                           'value': {(5, 'backup', 'backup'): {'ackedstate': 0,
+                                                                                                                               'state': 1,
+                                                                                                                               'transaction': 0,
+                                                                                                                               'value': 'true'},
+                                                                                                     (5, 'fail_timeout', 'fail_timeout'): {'ackedstate': 0,
+                                                                                                                                           'state': 1,
+                                                                                                                                           'transaction': 0,
+                                                                                                                                           'value': '5'},
+                                                                                                     (5, 'ip', 'ip'): {'ackedstate': 0,
+                                                                                                                       'state': 1,
+                                                                                                                       'transaction': 0,
+                                                                                                                       'value': '10.9.218.1'},
+                                                                                                     (5, 'max_fails', 'max_fails'): {'ackedstate': 0,
+                                                                                                                                     'state': 1,
+                                                                                                                                     'transaction': 0,
+                                                                                                                                     'value': '10'},
+                                                                                                     (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                           'state': 1,
+                                                                                                                           'transaction': 0,
+                                                                                                                           'value': '80'},
+                                                                                                     (5, 'weight', 'weight'): {'ackedstate': 0,
+                                                                                                                               'state': 1,
+                                                                                                                               'transaction': 0,
+                                                                                                                               'value': '3'}}},
+                                                                   (4, 'server', 'web2'): {'ackedstate': 0,
+                                                                                           'state': 1,
+                                                                                           'transaction': 0,
+                                                                                           'value': {(5, 'ip', 'ip'): {'ackedstate': 0,
+                                                                                                                       'state': 1,
+                                                                                                                       'transaction': 0,
+                                                                                                                       'value': '10.9.218.2'},
+                                                                                                     (5, 'port', 'port'): {'ackedstate': 0,
+                                                                                                                           'state': 1,
+                                                                                                                           'transaction': 0,
+                                                                                                                           'value': '80'}}},
+                                                                   (5, 'upstreamName', 'upstreamName'): {'ackedstate': 0,
+                                                                                                         'state': 1,
+                                                                                                         'transaction': 0,
+                                                                                                         'value': 'backend'}}},
+                           (7, '', '2129920_16389'): {'ackedstate': 0,
+                                                      'state': 1,
+                                                      'tag': 2072,
+                                                      'transaction': 0,
+                                                      'type': 1},
+                           (7, '', '2129920_49162'): {'ackedstate': 0,
+                                                      'state': 1,
+                                                      'tag': 2041,
+                                                      'transaction': 0,
+                                                      'type': 1},
+                           (8, '', 'NginxDevice_client_2129920_49162'): {'ackedstate': 0,
+                                                                         'encap': '2129920_49162',
+                                                                         'state': 1,
+                                                                         'transaction': 0,
+                                                                         'vif': 'NginxDevice_client'},
+                           (8, '', 'NginxDevice_pool_2129920_16389'): {'ackedstate': 0,
+                                                                       'encap': '2129920_16389',
+                                                                       'state': 1,
+                                                                       'transaction': 0,
+                                                                       'vif': 'NginxDevice_pool'},
+                           (10, '', 'NginxDevice_client'): {'ackedstate': 0,
+                                                            'cifs': {'NginxDevice_Device_1': 'eth0'},
+                                                            'state': 1,
+                                                            'transaction': 0},
+                           (10, '', 'NginxDevice_pool'): {'ackedstate': 0,
+                                                          'cifs': {'NginxDevice_Device_1': 'eth2'},
+                                                          'state': 1,
+                                                          'transaction': 0}}}}
 
-# -- Backend
-backend_name = "backend"
 
-# Servers
-server1 = NginxBackendServer(address="10.9.218.1", params=NginxBackendServerParameters(weight=2))
-server2 = NginxBackendServer(address="10.9.218.2", params=NginxBackendServerParameters(weight=3))
+print("Initialize the configurations...")
+# Convert configuration into API object
+api_config = Configuration(configuration)
+print("> Configuration\n{}".format(api_config))
 
-backend = NginxBackend(name=backend_name, server_pool=[server1, server2])
+# Create NginxDevice
+nginx_device = NginxDevice(device)
+print("> Device\n{}".format(nginx_device))
 
-# -- Frontend
-# Location
-frontend = NginxFrontend(locations=NginxServerLocation(backend_name, '/'))
+# Convert configuration into NGINX objects
+nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
+https_enable = management_configuration['https']
 
-# Configuration
-config = NginxConfiguration(frontend, backend)
+print("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
 
-print("-------- Configuration ---------")
-print(config)
-print("\n------ Configuration File ------")
-print(config.export())
-print("--------------------------------")
+for nginx_configuration in nginx_configurations:
+    print(">> For configuration {}".format(nginx_configuration.name))
+    print("Generating the string...")
+    # Generate (nginx) string of the configuration
+    string_config_file = nginx_configuration.visit(file_exporter())
+    print(string_config_file)
