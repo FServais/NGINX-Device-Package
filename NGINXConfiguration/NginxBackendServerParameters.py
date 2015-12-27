@@ -67,4 +67,3 @@ class NginxBackendServerParameters:
 if __name__ == "__main__":
     params = NginxBackendServerParameters(backup=True, down=False, fail_timeout=4)
     print(params)
-    print(params.export())

@@ -32,29 +32,15 @@ class NginxServerListen:
     def __repr__(self):
         return str(self)
 
-    def export(self):
-        from NginxExportConfiguration.Directive import Directive
-        param = ""
-
-        if self.address:
-            param = "{}:".format(self.address)
-
-        param = "{}{}".format(param, self.port)
-
-        return Directive(self.__LISTEN_DIRECTIVE__NAME, param)
-
     def visit(self, visitor):
         return visitor(self)
 
 if __name__ == "__main__":
     listen = NginxServerListen(address="127.0.0.1", port=8001)
-    print(listen.export())
 
     listen2 = NginxServerListen(port=8001)
-    print(listen2.export())
 
     listen3 = NginxServerListen("*", 8001)
-    print(listen3.export())
 
     listen4 = NginxServerListen.from_configuration(
         [Configuration({(5, 'address', 'address'): {'ackedstate': 0,
@@ -65,4 +51,3 @@ if __name__ == "__main__":
                                                            'state': 1,
                                                            'transaction': 0,
                                                            'value': '8003'}})])
-    print(listen4.export())

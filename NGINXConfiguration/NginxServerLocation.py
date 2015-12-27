@@ -51,28 +51,9 @@ class NginxServerLocation:
     def __repr__(self):
         return str(self)
 
-    def export(self):
-        from NginxExportConfiguration.Block import Block
-        from NginxExportConfiguration.Directive import Directive
-
-        block_parameters = []
-        if self.modifier:
-            block_parameters.append(self.modifier)
-
-        block_parameters.append(self.uri)
-
-        return Block(self.__LOCATION_BLOCK_NAME, block_parameters, Directive(self.pass_method, "{}://{}".format(
-            "https" if self.https else "http", self.backend_name)))
-
     def visit(self, visitor):
         return visitor(self)
 
 if __name__ == "__main__":
     location = NginxServerLocation("backend", "/", pass_method="method", modifier="~*")
     print(location)
-    print(location.export())
-
-    location2 = NginxServerLocation.from_configuration(
-        [Configuration({(5, 'backend_name', 'backend_name'): {'ackedstate': 0, 'state': 1,'transaction': 0,'value': 'backend'}}),
-                 Configuration({(5, 'uri', 'uri'): {'ackedstate': 0,'state': 1,'transaction': 0,'value': '/'}})])
-    print(location2.export())

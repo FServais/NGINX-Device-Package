@@ -63,16 +63,6 @@ class NginxBackend:
     def __repr__(self):
         return str(self)
 
-    def export(self):
-        from NginxExportConfiguration.Block import Block
-        from NginxExportConfiguration.Directive import Directive
-        lines = []
-        if self.method != self.__DEFAULT_LB_ALGORITHM:
-            lines.append(Directive(self.method))
-
-        lines.extend([server.export() for server in self.server_pool])
-        return Block(self.__UPSTREAM_BLOCK_NAME, self.name, lines)
-
     def visit(self, visitor):
         return visitor(self)
 
@@ -90,4 +80,3 @@ if __name__ == "__main__":
     backend.add_backend_server(backend_server3)
 
     print(backend)
-    print(backend.export())

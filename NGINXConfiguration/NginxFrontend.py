@@ -59,16 +59,6 @@ class NginxFrontend:
     def __repr__(self):
         return str(self)
 
-    def export(self):
-        from NginxExportConfiguration.Block import Block
-        block = Block(self.__SERVER_BLOCK__NAME)
-
-        block.add_lines(self.listen.export())
-        for location in self.locations:
-            block.add_lines(location.export())
-
-        return block
-
     def visit(self, visitor):
         return visitor(self)
 
@@ -77,10 +67,9 @@ if __name__ == "__main__":
     frontend = NginxFrontend(locations=NginxServerLocation("backend", '/'))
 
     print(frontend)
-    print(frontend.export())
 
     frontend2 = NginxFrontend([Configuration({(4, 'listen', 'listen'): {'state': 1, 'transaction': 0, 'ackedstate': 0, 'value': {(5, 'address', 'address'): {'state': 1, 'transaction': 0, 'ackedstate': 0, 'value': '127.0.0.1'}, (5, 'port', 'port'): {'state': 1, 'transaction': 0, 'ackedstate': 0, 'value': '80'}}}}
 ),
                                Configuration({(4, 'location', 'location'): {'state': 1, 'transaction': 0, 'ackedstate': 0, 'value': {(5, 'backend_name', 'backend_name'): {'state': 1, 'transaction': 0, 'ackedstate': 0, 'value': 'backend'}, (5, 'uri', 'uri'): {'state': 1, 'transaction': 0, 'ackedstate': 0, 'value': '/'}}}}
 )])
-    print(frontend.export())
+    print(frontend2)

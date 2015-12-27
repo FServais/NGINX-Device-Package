@@ -58,15 +58,6 @@ class NginxBackendServer:
     def __repr__(self):
         return str(self)
 
-    def export(self):
-        from NginxExportConfiguration.Directive import Directive
-        parameters = ["{}:{}".format(self.address, self.port)]
-
-        if self.params is not None:
-            parameters.extend(self.params.export())
-
-        return Directive(self.__SERVER_DIRECTIVE_NAME, parameters)
-
     def visit(self, visitor):
         return visitor(self)
 
@@ -75,4 +66,3 @@ if __name__ == "__main__":
     backend_server.set_parameters(NginxBackendServerParameters(backup=True, max_fails=3))
 
     print(backend_server)
-    print(backend_server.export())
