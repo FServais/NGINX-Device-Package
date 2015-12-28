@@ -95,7 +95,10 @@ def serviceAudit(device, configuration):
     nginx_device = NginxDevice(device)
 
     # Convert configuration into NGINX objects
-    nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
+    parser = ConfigurationParser()
+    parser.from_API_configuration(api_config)
+    nginx_configurations = parser.get_nginx_configurations()
+    management_configuration = parser.get_management_configuration()
 
     https_enable = management_configuration['https']
 
@@ -108,7 +111,7 @@ def serviceAudit(device, configuration):
         logger.log(">> For configuration {}".format(nginx_configuration.name))
         logger.log("Generating the string...")
         # Generate (nginx) string of the configuration
-        string_config_file = nginx_configuration.visit(file_exporter())
+        string_config_file = nginx_configuration.accept(file_exporter())
 
         logger.log("Getting the list of the sites...")
         # Get the list of existing configurations
@@ -139,7 +142,10 @@ def serviceModify(device, configuration):
     logger.log("> Device\n{}".format(nginx_device))
 
     # Convert configuration into NGINX objects
-    nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
+    parser = ConfigurationParser()
+    parser.from_API_configuration(api_config)
+    nginx_configurations = parser.get_nginx_configurations()
+    management_configuration = parser.get_management_configuration()
     logger.log("Nginxconfig: {}".format(nginx_configurations))
     logger.log("Management: {}".format(management_configuration))
     https_enable = management_configuration['https']
@@ -153,7 +159,7 @@ def serviceModify(device, configuration):
         logger.log(">> For configuration {}".format(nginx_configuration.name))
         logger.log("Generating the string...")
         # Generate (nginx) string of the configuration
-        string_config_file = nginx_configuration.visit(file_exporter())
+        string_config_file = nginx_configuration.accept(file_exporter())
 
         logger.log("Getting the list of the sites...")
         # Get the list of existing configurations

@@ -6,7 +6,6 @@ __author__ = 'Fabrice Servais'
 
 
 class NginxConfiguration:
-
     def __init__(self, frontends=None, backends=None, name="default", enabled=True):
         """
         Constructor.
@@ -58,15 +57,14 @@ class NginxConfiguration:
         self.backends.extend(backends)
 
     def __str__(self):
-        return "{}".format({'cfgParameters': {'name': self.name, 'enabled': self.enabled}, 'http': {'frontends': self.frontends, 'backends': self.backends}})
+        return "{}".format({'cfgParameters': {'name': self.name, 'enabled': self.enabled},
+                            'http': {'frontends': self.frontends, 'backends': self.backends}})
 
     def __repr__(self):
         return str(self)
 
-    def visit(self, visitor):
+    def accept(self, visitor):
         return visitor(self)
 
     def get_backends(self):
         return self.backends
-
-

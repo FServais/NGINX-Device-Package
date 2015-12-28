@@ -7,15 +7,15 @@ __author__ = 'Fabrice Servais'
 
 class ConfigurationParser:
 
-    @classmethod
-    def from_API_configuration(cls, api_configuration):
+    def __init__(self):
+        self.nginx_configurations = []
+        self.management_configuration = {}
+
+    def from_API_configuration(self, api_configuration):
         if api_configuration.get_type() == 0:
-            return cls.from_configurations(api_configuration.get_value())
+            self.from_configurations(api_configuration.get_value())
 
-        return [], {}
-
-    @classmethod
-    def from_configurations(cls, configurations):
+    def from_configurations(self, configurations):
         """
 
         :param configurations: Type list<API.Configuration>
@@ -27,16 +27,14 @@ class ConfigurationParser:
         frontend_configurations = {}
         backend_configurations = {}
 
-        nginx_final_configurations = []
-
-        management_configuration = {}
         for configuration in configurations:
             # Configurations of vnsMFunc
             if configuration.get_type() == 1:
                 function_load_balancer = configuration.get_value()[0]  # (3,....) -> ...
 
                 # Get the configurations
-                func_configurations = function_load_balancer.get_value_by_key('configuration')  # (4, 'configuration', 'Configuration') -> ...
+                func_configurations = function_load_balancer.get_value_by_key(
+                        'configuration')  # (4, 'configuration', 'Configuration') -> ...
 
                 for func_cfg in func_configurations:
 
@@ -77,7 +75,8 @@ class ConfigurationParser:
                         if param.key == 'enabled':
                             enabled = (param.get_value().lower() == "true")
 
-                    keys[func_cfg.get_name()] = {'frontendCfgs': frontend_configs, 'upstreamCfgs': backend_configs, 'enabled': enabled}
+                    keys[func_cfg.get_name()] = {'frontendCfgs': frontend_configs, 'upstreamCfgs': backend_configs,
+                                                 'enabled': enabled}
 
                 # Get the management configuration
                 mgmt_cfg_value = function_load_balancer.get_value_by_key('management')
@@ -86,7 +85,7 @@ class ConfigurationParser:
                     continue
 
                 # Get the HTTPS parameter
-                management_configuration['https'] = True # Default value
+                self.management_configuration['https'] = True  # Default value
                 https_cfg = mgmt_cfg_value[0].get_value()
 
                 if not https_cfg:
@@ -97,16 +96,17 @@ class ConfigurationParser:
                 if not https_val:
                     continue
 
-                management_configuration['https'] = (str(https_val.lower()) == 'true')
-
+                self.management_configuration['https'] = (str(https_val.lower()) == 'true')
 
             # Configurations of vnsMDevCfg
             elif configuration.get_type() == 4:
                 nginx_config_type_class = None
                 if configuration.get_key() == 'frontendServer':
-                    frontend_configurations[configuration.get_name()] = NginxFrontend.from_configuration(configuration.get_value())
+                    frontend_configurations[configuration.get_name()] = NginxFrontend.from_configuration(
+                            configuration.get_value())
                 elif configuration.get_key() == 'upstream':
-                    backend_configurations[configuration.get_name()] = NginxBackend.from_configuration(configuration.get_value())
+                    backend_configurations[configuration.get_name()] = NginxBackend.from_configuration(
+                            configuration.get_value())
 
         for config_name, config_value_names in keys.iteritems():
             frontend_names = config_value_names["frontendCfgs"]
@@ -115,6 +115,11 @@ class ConfigurationParser:
             frontends = list(map(lambda cfg_name: frontend_configurations[cfg_name], frontend_names))
             backends = list(map(lambda cfg_name: backend_configurations[cfg_name], backend_names))
 
-            nginx_final_configurations.append(NginxConfiguration(frontends, backends, config_name, config_value_names["enabled"]))
+            self.nginx_configurations.append(
+                    NginxConfiguration(frontends, backends, config_name, config_value_names["enabled"]))
 
-        return nginx_final_configurations, management_configuration
+    def get_nginx_configurations(self):
+        return self.nginx_configurations
+
+    def get_management_configuration(self):
+        return self.management_configuration

@@ -1,6 +1,5 @@
 from NGINXConfiguration.NginxBackend import NginxBackend
 from NGINXConfiguration.NginxBackendServer import NginxBackendServer
-from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
 from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NGINXConfiguration.NginxFrontend import NginxFrontend
 from NGINXConfiguration.NginxServerListen import NginxServerListen
@@ -22,8 +21,8 @@ def file_exporter():
         __DEFAULT_LB_ALGORITHM = "round-robin"
 
         if isinstance(node, NginxConfiguration):
-            fronts = [str(frontend.visit(file_exporter())) for frontend in node.frontends]
-            back = [str(backend.visit(file_exporter())) for backend in node.backends]
+            fronts = [str(frontend.accept(file_exporter())) for frontend in node.frontends]
+            back = [str(backend.accept(file_exporter())) for backend in node.backends]
 
             content = fronts + back
 
@@ -32,9 +31,9 @@ def file_exporter():
         elif isinstance(node, NginxFrontend):
             block = Block(__SERVER_BLOCK__NAME)
 
-            block.add_lines(node.listen.visit(file_exporter()))
+            block.add_lines(node.listen.accept(file_exporter()))
             for location in node.locations:
-                block.add_lines(location.visit(file_exporter()))
+                block.add_lines(location.accept(file_exporter()))
 
             return block
 
@@ -64,36 +63,32 @@ def file_exporter():
             if node.method != __DEFAULT_LB_ALGORITHM:
                 lines.append(Directive(node.method))
 
-            lines.extend([server.visit(file_exporter()) for server in node.server_pool])
+            lines.extend([server.accept(file_exporter()) for server in node.server_pool])
             return Block(__UPSTREAM_BLOCK_NAME, node.name, lines)
 
         elif isinstance(node, NginxBackendServer):
             parameters = ["{}:{}".format(node.address, node.port)]
 
-            if node.params is not None:
-                parameters.extend(node.params.visit(file_exporter()))
-
-            return Directive(__SERVER_DIRECTIVE_NAME, parameters)
-
-        elif isinstance(node, NginxBackendServerParameters):
-            to_return = []
+            params_to_add = []
 
             if node.backup:
-                to_return.append("backup")
+                params_to_add.append("backup")
 
             if node.down:
-                to_return.append("down")
+                params_to_add.append("down")
 
             if node.fail_timeout != -1:
-                to_return.append("fail_timeout={}".format(node.fail_timeout))
+                params_to_add.append("fail_timeout={}".format(node.fail_timeout))
 
             if node.max_fails != -1:
-                to_return.append("max_fails={}".format(node.max_fails))
+                params_to_add.append("max_fails={}".format(node.max_fails))
 
             if node.weight != -1:
-                to_return.append("weight={}".format(node.weight))
+                params_to_add.append("weight={}".format(node.weight))
 
-            return to_return
+            parameters.extend(params_to_add)
+
+            return Directive(__SERVER_DIRECTIVE_NAME, parameters)
 
         else:
             return ""

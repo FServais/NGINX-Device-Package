@@ -178,7 +178,7 @@ print(device_status)
 #     print(">> For configuration {}".format(nginx_configuration.name))
 #     print("Generating the string...")
 #     # Generate (nginx) string of the configuration
-#     string_config_file = nginx_configuration.visit(file_exporter())
+#     string_config_file = nginx_configuration.accept(file_exporter())
 #     print(string_config_file)
 #
 #     print("Getting the list of the sites...")

@@ -172,7 +172,10 @@ nginx_device = NginxDevice(device)
 print("> Device\n{}".format(nginx_device))
 
 # Convert configuration into NGINX objects
-nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
+parser = ConfigurationParser()
+parser.from_API_configuration(api_config)
+nginx_configurations = parser.get_nginx_configurations()
+management_configuration = parser.get_management_configuration()
 https_enable = management_configuration['https']
 
 print("Configuration: {} (len {})".format(nginx_configurations, len(nginx_configurations)))
@@ -181,5 +184,5 @@ for nginx_configuration in nginx_configurations:
     print(">> For configuration {}".format(nginx_configuration.name))
     print("Generating the string...")
     # Generate (nginx) string of the configuration
-    string_config_file = nginx_configuration.visit(file_exporter())
+    string_config_file = nginx_configuration.accept(file_exporter())
     print(string_config_file)

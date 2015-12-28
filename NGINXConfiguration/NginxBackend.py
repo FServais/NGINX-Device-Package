@@ -1,5 +1,5 @@
 from NGINXConfiguration.NginxBackendServer import NginxBackendServer
-from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
+# from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
 
 __author__ = 'Fabrice Servais'
 
@@ -63,7 +63,7 @@ class NginxBackend:
     def __repr__(self):
         return str(self)
 
-    def visit(self, visitor):
+    def accept(self, visitor):
         return visitor(self)
 
     def get_backend_servers(self):
@@ -71,8 +71,7 @@ class NginxBackend:
 
 if __name__ == "__main__":
     backend = NginxBackend(method="ip-hash")
-    backend_server1 = NginxBackendServer(address="127.0.0.1", port=80,
-                                         params=NginxBackendServerParameters(backup=True, max_fails=3))
+    backend_server1 = NginxBackendServer(address="127.0.0.1", port=80, backup=True)
     backend_server2 = NginxBackendServer(address="0.0.0.0", port=2354)
     backend_server3 = NginxBackendServer(address="10.10.10.10")
 

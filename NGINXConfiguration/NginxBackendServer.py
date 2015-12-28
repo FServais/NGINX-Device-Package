@@ -1,4 +1,4 @@
-from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
+# from NGINXConfiguration.NginxBackendServerParameters import NginxBackendServerParameters
 
 __author__ = 'Fabrice Servais'
 
@@ -6,7 +6,7 @@ __author__ = 'Fabrice Servais'
 class NginxBackendServer:
     __SERVER_DIRECTIVE_NAME = "server"
 
-    def __init__(self, address, port=80, params=None):
+    def __init__(self, address, port=80, backup=False, down=False, fail_timeout=-1, max_fails=-1, weight=-1):
         """
         Constructor.
         :param address: IP address of the server.
@@ -15,13 +15,24 @@ class NginxBackendServer:
         """
         self.address = address
         self.port = port
-        self.params = params
+
+        # Parameters
+        self.backup = backup
+        self.down = down
+        self.fail_timeout = fail_timeout
+        self.max_fails = max_fails
+        self.weight = weight
 
     @classmethod
     def from_configuration(cls, configuration):
         address = None
         port = 80
-        params = NginxBackendServerParameters()
+
+        backup = False
+        down = False
+        fail_timeout = -1
+        max_fails = -1
+        weight = -1
 
         for config in configuration:
             if config.get_key() == "ip":
@@ -29,40 +40,32 @@ class NginxBackendServer:
             elif config.get_key() == "port":
                 port = config.get_value()
             elif config.get_key() == "backup":
-                params.backup = (config.get_value().lower() == 'true')
+                backup = (config.get_value().lower() == 'true')
             elif config.get_key() == "down":
-                params.down = (config.get_value().lower() == 'true')
+                down = (config.get_value().lower() == 'true')
             elif config.get_key() == "fail_timeout":
-                params.fail_timeout = int(config.get_value())
+                fail_timeout = int(config.get_value())
             elif config.get_key() == "max_fails":
-                params.max_fails = int(config.get_value())
+                max_fails = int(config.get_value())
             elif config.get_key() == "weight":
-                params.weight = int(config.get_value())
+                weight = int(config.get_value())
 
-        return NginxBackendServer(address, port, params)
-
-    def set_parameters(self, params):
-        """
-        Set the parameters of the server.
-        :param params: Type: NginxBackendServerParameters, set of backend parameters.
-        """
-        self.params = params
+        return NginxBackendServer(address=address, port=port, backup=backup, down=down, fail_timeout=fail_timeout,
+                                  max_fails=max_fails, weight=weight)
 
     def __str__(self):
-        to_return = {'address': self.address, 'port': self.port}
-        if self.params is not None:
-            to_return['parameters'] = self.params
+        to_return = {'address': self.address, 'port': self.port, 'backup': self.backup, 'down': self.down,
+                     'fail_timeout': self.fail_timeout, 'max_fails': self.max_fails, 'weight': self.weight}
 
         return "{}".format(to_return)
 
     def __repr__(self):
         return str(self)
 
-    def visit(self, visitor):
+    def accept(self, visitor):
         return visitor(self)
+
 
 if __name__ == "__main__":
     backend_server = NginxBackendServer(address="127.0.0.1", port=80)
-    backend_server.set_parameters(NginxBackendServerParameters(backup=True, max_fails=3))
-
     print(backend_server)

@@ -59,7 +59,7 @@ class NginxFrontend:
     def __repr__(self):
         return str(self)
 
-    def visit(self, visitor):
+    def accept(self, visitor):
         return visitor(self)
 
 
