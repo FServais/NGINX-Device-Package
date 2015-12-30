@@ -11,7 +11,7 @@
             <!-- Script -->
             <vnsDevScript name="nginx"
                           ctrlrVersion="1.0"
-                          minorversion="8"
+                          minorversion="1"
                           versionExpr="1.0"
                           packageName="DeviceScript.py"/>
 
@@ -30,13 +30,8 @@
             <vnsMIfLbl name="internal" shortName="int"/>
             <vnsMIfLbl name="management" shortName="mgmt"/>
 
-
             <!-- Parameter validation -->
-
-            <!-- TODO : Test regex more in depth! -->
-            <!-- From 1.0.0.1 to 223.255.255.254, exception 127.x.x.x -->
-            <vnsComparison name="isIPv4Addr" cmp="match" value="^(?!127)(?!1\.0\.0\.0)(?!223\.255\.255\.255)(2[0-2][0-3]|[1]?[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$"/>
-            <!--<vnsComparison name="ipv4Addr" cmp="match" value="^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])(\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])){3}$"/>-->
+            <vnsComparison name="isIPv4Addr" cmp="match" value="\d*\.\d*\.\d*\.\d*"/>
 
             <vnsComposite comp="or" name="isLBAlgo">
                 <vnsComparison cmp="eq" name="round-robin" value="round-robin"/>
@@ -51,7 +46,7 @@
                 <vnsComparison cmp="match" name="false" value="false"/>
             </vnsComposite>
 
-            <!-- More details at: http://nginx.org/en/docs/http/ngx_http_core_module.html#location -->
+            <!-- More details on the 'modifier': http://nginx.org/en/docs/http/ngx_http_core_module.html#location -->
             <vnsComposite comp="or" name="isModifier">
                 <vnsComparison cmp="eq" name="eq" value="="/> <!-- Exact match -->
                 <vnsComparison cmp="eq" name="CIregex" value="~*"/> <!-- Case insensitive regex -->
@@ -66,7 +61,6 @@
                 <vnsComparison cmp="eq" name="scgi_pass" value="scgi_pass"/>
                 <vnsComparison cmp="eq" name="memcached_pass" value="memcached_pass"/>
             </vnsComposite>
-
 
             <!-- Errors -->
             <vnsMDfcts>
@@ -83,6 +77,7 @@
                 </vnsMDfct>
             </vnsMDfcts>
 
+
             <!-- - - - - - - - - - - - - - - - - - - - - -->
             <!--  CLUSTER AND DEVICE CONFIGURATION PART  -->
             <!-- - - - - - - - - - - - - - - - - - - - - -->
@@ -92,7 +87,6 @@
 
                 </vnsDevCfg>
             </vnsClusterCfg>
-
 
 
             <!-- - - - - - - - - - - - - - - - - - - - - -->
@@ -107,7 +101,6 @@
                             description="Configure the backend (upstream)"
                             dispLabel="Backend"
                             cardinality="n">
-                    <!--scopedBy="epg"-->
 
                     <vnsMParam key="upstreamName" description="Name of the backend" mandatory="true" dType="str" dispLabel="Name"/>
 
@@ -117,7 +110,6 @@
                                 description="Server of a backend"
                                 dispLabel="Server"
                                 cardinality="n">
-                        <!--scopedBy="epg"-->
                         <!-- Connectivity -->
                         <vnsMParam key="ip" description="Address of the server" mandatory="true" dType="str" dispLabel="Address"/>
                         <vnsMParam key="port" description="Port of the server" mandatory="false" dType="str" dispLabel="Port"/>
@@ -168,9 +160,10 @@
 
             </vnsMDevCfg>
 
+
             <!-- Group configuration -->
             <!--<vnsGrpCfg>-->
-
+                <!-- No group configuration -->
             <!--</vnsGrpCfg>-->
 
 
@@ -234,11 +227,11 @@
                                 <vnsAbsParam name="upstreamName" key="upstreamName" value="backend"/>
                                 <vnsAbsFolder key="server" name="web1">
                                     <vnsAbsParam name="ip" key="ip" value="127.0.0.1"/>
-                                    <vnsAbsParam name="port" key="port" value="8001"/>
+                                    <vnsAbsParam name="port" key="port" value="80"/>
                                 </vnsAbsFolder>
                                 <vnsAbsFolder key="server" name="web2">
                                     <vnsAbsParam name="ip" key="ip" value="127.0.0.1"/>
-                                    <vnsAbsParam name="port" key="port" value="8002"/>
+                                    <vnsAbsParam name="port" key="port" value="80"/>
                                 </vnsAbsFolder>
                             </vnsAbsFolder>
 

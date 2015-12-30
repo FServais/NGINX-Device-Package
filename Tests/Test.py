@@ -1,9 +1,5 @@
 # ===== Service modify
 # Arguments
-from API.Configuration import Configuration
-from Exporter.FileExporter import file_exporter
-from NGINXConfiguration.ConfigurationParser import ConfigurationParser
-from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from NginxDevice import NginxDevice
 
 device = {'name': 'NginxLoadBalancer', 'virtual': True, 'devs': {'NginxLoadBalancer_Device_1': {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 80, 'virtual': True}}, 'host': '127.0.0.1', 'contextaware': False, 'port': 5000, 'creds': {'username': 'fservais', 'password': '<hidden>'}}
@@ -169,6 +165,7 @@ print(device_status)
 # nginx_configurations, management_configuration = ConfigurationParser.from_API_configuration(api_config)
 # https_enable = management_configuration['https']
 #
+
 # if not https_enable:
 #     nginx_device.disable_https()
 #

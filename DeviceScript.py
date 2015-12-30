@@ -4,17 +4,16 @@
 import os
 import sys
 
-from Exporter.FileExporter import file_exporter
+from Insieme.Config import Result
+
+from API.Configuration import Configuration
+from API.ReturnValue import ReturnValue
 from Fault.Fault import Fault, FaultCode
 from NGINXConfiguration.ConfigurationParser import ConfigurationParser
-from NGINXConfiguration.NginxConfiguration import NginxConfiguration
 from Network.ConnectivityChecking import ConnectivityChecking
 from NginxDevice import NginxDevice
+from NginxExportConfiguration.FileExporter import file_exporter
 from utils import logger
-from API.ReturnValue import ReturnValue
-from API.Configuration import Configuration
-from API.Device import Device
-from Insieme.Config import Result
 
 __author__ = 'Fabrice Servais'
 

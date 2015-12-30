@@ -1,7 +1,7 @@
 from API.Configuration import Configuration
-from Exporter.FileExporter import file_exporter
 from NGINXConfiguration.ConfigurationParser import ConfigurationParser
 from NginxDevice import NginxDevice
+from NginxExportConfiguration.FileExporter import file_exporter
 
 __author__ = 'Fabrice Servais'
 device = {'name': 'NginxLoadBalancer', 'virtual': True, 'devs': {'NginxLoadBalancer_Device_1': {'creds': {'username': 'fservais', 'password': '<hidden>'}, 'host': '127.0.0.1', 'port': 80, 'virtual': True}}, 'host': '127.0.0.1', 'contextaware': False, 'port': 5000, 'creds': {'username': 'fservais', 'password': '<hidden>'}}
