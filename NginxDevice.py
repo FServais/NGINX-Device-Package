@@ -132,13 +132,82 @@ class NginxDevice(Device):
         return (True, [str(site) for site in message['sites']])
 
     def get_site_config(self, site_name):
-        return self.request_handler.send("GET", self.__URI_SITE_CONFIG + '/' + site_name)
+        """
+        Get a particular configuration based on its name 'site_name'.
+
+        Args:
+            site_name: (String) Name of the configuration.
+
+        Returns: Boolean, List<String>
+            Boolean: True if the Agent has correctly replied (200 OK), False otherwise.
+            String: Configuration.
+
+        """
+        status, message = self.request_handler.send("GET", self.__URI_SITE_CONFIG + '/' + site_name)
+
+        if status != 200:
+            logger.log("Error {}: {}".format(status, message['message']))
+            return False, ""
+
+        return True, message['config']
 
     def create_site_config(self, site_name, config, enable=True):
-        return self.request_handler.send("POST", self.__URI_SITE_CONFIG + '/' + site_name, payload={'config': config, 'enable': enable})
+        """
+        Create a configuration named 'site_name' on the device, that contains 'config'. If 'enable', the configuration is activated.
+
+        Args:
+            site_name: (String) Name of the configuration.
+            config: (String) Content of the configuration.
+            enable: (Boolean) True to enable the configuration on the device.
+
+        Returns: Boolean
+            Boolean: True if the configuration has been created, False otherwise.
+
+        """
+        status, message = self.request_handler.send("POST", self.__URI_SITE_CONFIG + '/' + site_name, payload={'config': config, 'enable': enable})
+
+        if status != 200:
+            logger.log("Error {}: {}".format(status, message['message']))
+            return False
+
+        return message['state'] == 1
 
     def update_site_config(self, site_name, config, enable=True):
-        return self.request_handler.send("PUT", self.__URI_SITE_CONFIG + '/' + site_name, payload={'config': config, 'enable': enable})
+        """
+        Update a configuration named 'site_name' on the device, that contains 'config'. If 'enable', the configuration is activated.
+
+        Args:
+            site_name: (String) Name of the configuration.
+            config: (String) Content of the configuration.
+            enable: (Boolean) True to enable the configuration on the device.
+
+        Returns: Boolean
+            Boolean: True if the configuration has been updated, False otherwise.
+
+        """
+        status, message = self.request_handler.send("PUT", self.__URI_SITE_CONFIG + '/' + site_name, payload={'config': config, 'enable': enable})
+
+        if status != 200:
+            logger.log("Error {}: {}".format(status, message['message']))
+            return False
+
+        return message['state'] == 1
 
     def update_nginx_dir_config(self, new_path):
-        return self.request_handler.send("PUT", self.__URI_NGINX_DIR_CONFIG, payload={'path': new_path})
+        """
+        Set the directory where is nginx (by default: /etc/nginx).
+
+        Args:
+            new_path: Path to NGINX directory.
+
+        Returns: Boolean
+            Boolean: True if the path has been updated, False otherwise.
+
+        """
+        status, message = self.request_handler.send("PUT", self.__URI_NGINX_DIR_CONFIG, payload={'path': new_path})
+
+        if status != 200:
+            logger.log("Error {}: {}".format(status, message))
+            return False
+
+        return message['state'] == 1
