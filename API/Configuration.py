@@ -55,19 +55,49 @@ class Configuration:
     def get_value(self):
         return self.value
 
+    def get_target(self):
+        return self.target
+
     def get_value_by_key(self, key):
-        if self.value is None:
+        """
+        Get configurations in the value where the key == 'key'.
+
+        For example, if <config> have value = [(1,'key1',*): {value:1}, (1,'key2',*): {value:2}, (2,'key1',*): {value:3}],
+        then config.get_value_by_key('key1') gives: [(1,'key1',*): {value:1}, (2,'key1',*): {value:3}].
+
+        Args:
+            key: (String) Key to search.
+
+        Returns: List<API.Configuration>
+            List<API.Configuration>: List of configurations
+
+        """
+        if self.value is None or type(self.value) is not list:
             return None
 
         values = []
 
         for value in self.value:
+
             if value.get_key() == key:
                 values.append(value)
 
         return values
 
     def get_value_by_type(self, type):
+        """
+        Get configurations in the value where the type == 'type'.
+
+        For example, if <config> have value = [(1,'key1',*): {value:1}, (1,'key2',*): {value:2}, (2,'key1',*): {value:3}],
+        then config.get_value_by_type(1) gives: [(1,'key1',*): {value:1}, (1,'key2',*): {value:2}].
+
+        Args:
+            type: (Int) Type to search.
+
+        Returns: List<API.Configuration>
+            List<API.Configuration>: List of configurations
+
+        """
         if self.value is None:
             return None
 
@@ -80,6 +110,20 @@ class Configuration:
         return values
 
     def get_value_by_key_name(self, key, name):
+        """
+        Get configurations in the value where the key == 'key' and name == 'name'.
+
+        For example, if <config> have value = [(1,'key1','name1'): {value:1}, (1,'key2','name2'): {value:2}, (2,'key1','name3'): {value:3}],
+        then config.get_value_by_key_name('key1','name3') gives: [(2,'key1','name3'): {value:3}].
+
+        Args:
+            key: (String) Key to search.
+            name: (String) Name to search.
+
+        Returns: List<API.Configuration>
+            List<API.Configuration>: List of configurations
+
+        """
         if self.value is None:
             return None
 
@@ -89,8 +133,6 @@ class Configuration:
 
         return None
 
-    def get_target(self):
-        return self.target
 
 if __name__ == "__main__":
 
@@ -233,4 +275,6 @@ if __name__ == "__main__":
                                                            'transaction': 0,
                                                            'value': '80'}}}})
     print(config2)
+
+
 
