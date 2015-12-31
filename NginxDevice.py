@@ -84,32 +84,28 @@ class NginxDevice(Device):
 
         # -- Score calculated by the Device Script
 
-        # status, message = self.request_handler.send("GET", self.__URI_ROOT)
-        #
-        # if status != 200:
-        #     return False, 1
-        #
-        # if message is None:
-        #     return status == 200, 1
-        #
-        # print("Status", status)
-        # print("Message", message)
-        # device_status = message["status"]
-        #
-        # return status == 200, device_status
+        status, message = self.request_handler.send("GET", self.__URI_ROOT)
 
-        # -- Score calculated by the Agent
-
-        device_name = 'lb'  # TODO Get LB (device) name before hand
-
-        status, message = self.request_handler.send('GET', self.__URI_HEALTH_DEVICE + '/' + device_name)
         if status != 200:
-            return False, 0
+            return False, 50
 
-        score = message['score']
-        logger.log("Health score of {}: {}".format(device_name, score))
+        if message is None:
+            return status == 200, 50
 
-        return status == 200, score
+        return status == 200, 100
+
+        # # -- Score calculated by the Agent
+        #
+        # device_name = 'lb'  # TODO Get LB (device) name before hand
+        #
+        # status, message = self.request_handler.send('GET', self.__URI_HEALTH_DEVICE + '/' + device_name)
+        # if status != 200:
+        #     return False, 0
+        #
+        # score = message['score']
+        # logger.log("Health score of {}: {}".format(device_name, score))
+        #
+        # return status == 200, score
 
     def get_site_list(self, all_available_sites=False):
         """
