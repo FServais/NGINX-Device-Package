@@ -13,3 +13,6 @@ See the latest release of the NGINX Device Package over here: [Releases](https:/
 *or*
 
 Clone the repository.
+
+### Download the Agent
+For the APIC to communicate with NGINX, an agent providing an API for the controller is needed. You can download it here: [Agent](https://github.com/FServais/NGINX-Agent)
