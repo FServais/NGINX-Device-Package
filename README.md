@@ -6,4 +6,8 @@ This repository contains a Cisco's ACI Device Package to make possible the usage
 
 ## Getting started
 **Coming soon...**
+
+### Download the Device Package
+See the latest release of the NGINX Device Package over here: [Releases](https://github.com/FServais/NGINX-Device-Package/releases)
+
 The easiest way is to first clone the repository.
