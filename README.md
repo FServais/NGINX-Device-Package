@@ -18,5 +18,5 @@ Clone the repository.
 For the APIC to communicate with NGINX, an agent providing an API for the controller is needed. You can download it here: [Agent](https://github.com/FServais/NGINX-Agent)
 
 ## Resources
-- Demo video of the insertion of NGINX as a Load-Balancer in a lab environment: **Coming soon...**
+- Demo video of the insertion of NGINX as a Load-Balancer in a lab environment: [Video](https://www.youtube.com/watch?v=eLiydsFUOYc)
 - Slides of the presentation of the Device Package (January 8, 2016): [Slides](http://fr.slideshare.net/FabriceServais/development-of-a-cisco-aci-device-package-for-nginx-as-a-loadbalancer)
