@@ -19,4 +19,4 @@ For the APIC to communicate with NGINX, an agent providing an API for the contro
 
 ## Resources
 - Want to see it working? Check the demo [video](https://www.youtube.com/watch?v=eLiydsFUOYc) of the insertion of NGINX as a Load-Balancer in a lab environment
-- [Slides](http://fr.slideshare.net/FabriceServais/development-of-a-cisco-aci-device-package-for-nginx-as-a-loadbalancer) of the presentation of the Device Package (January 8, 2016): 
+- [Slides](http://fr.slideshare.net/FabriceServais/development-of-a-cisco-aci-device-package-for-nginx-as-a-loadbalancer) of the presentation of the Device Package (January 8, 2016)
